@@ -1,0 +1,3 @@
+manifests/*
+istio-1*
+__pycache__

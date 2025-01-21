@@ -1,0 +1,508 @@
+components:
+  comp-data-fetching:
+    executorLabel: exec-data-fetching
+    inputDefinitions:
+      parameters:
+        dataset_name:
+          parameterType: STRING
+        splits:
+          parameterType: LIST
+    outputDefinitions:
+      artifacts:
+        output_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-data-tokenization:
+    executorLabel: exec-data-tokenization
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        dataset_text_column:
+          defaultValue: text
+          isOptional: true
+          parameterType: STRING
+        model_name:
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        output_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-model-fine-tuning:
+    executorLabel: exec-model-fine-tuning
+    inputDefinitions:
+      artifacts:
+        tokenized_data:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        epochs:
+          defaultValue: 1
+          isOptional: true
+          parameterType: NUMBER_INTEGER
+        model_name:
+          defaultValue: distilgpt2
+          isOptional: true
+          parameterType: STRING
+    outputDefinitions:
+      artifacts:
+        output_model_dir:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-model-upload:
+    executorLabel: exec-model-upload
+    inputDefinitions:
+      artifacts:
+        model_dir:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        original_model_name:
+          parameterType: STRING
+        secret_name:
+          parameterType: STRING
+        secret_namespace:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-data-fetching:
+      container:
+        args:
+          - '--executor_input'
+          - '{{$}}'
+          - '--function_to_execute'
+          - data_fetching
+        command:
+          - sh
+          - '-c'
+          - >
+
+            if ! [ -x "$(command -v pip)" ]; then
+                python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip
+            fi
+
+
+            PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet
+            --no-warn-script-location 'kfp==2.11.0' '--no-deps'
+            'typing-extensions>=3.7.4,<5; python_version<"3.9"' && "$0" "$@"
+          - sh
+          - '-ec'
+          - >
+            program_path=$(mktemp -d)
+
+
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+            _KFP_RUNTIME=true python3 -m
+            kfp.dsl.executor_main                        
+            --component_module_path                        
+            "$program_path/ephemeral_component.py"                         "$@"
+          - |+
+
+            import kfp
+            from kfp import dsl
+            from kfp.dsl import *
+            from typing import *
+
+            def data_fetching(
+                dataset_name: str,
+                splits: list,
+                output_dataset: Output[Dataset],
+            ):
+                """
+                Fetches a dataset from Hugging Face's datasets library.
+
+                Args:
+                - dataset_name: Name of the dataset to fetch (e.g., "openwebtext").
+                - output_dataset: Output location to store the fetched dataset.
+
+                """
+                from datasets import load_dataset, DatasetDict
+
+                # Load dataset with specified parameters
+                dataset = load_dataset(dataset_name)
+
+                # Get the required splits
+                dataset = DatasetDict({
+                    "train": dataset["train"],
+                    "test": dataset["test"]
+                })
+                for split in splits:
+                    split_name = split["split_name"]
+                    split_size = split["split_size"]
+                    dataset[split_name] = dataset[split_name].shuffle(seed=42).select(range(split_size))
+
+                # Save dataset to output path
+                dataset.save_to_disk(output_dataset.path)
+
+        image: '2cassa2/kfp-runtime:0.0.1'
+    exec-data-tokenization:
+      container:
+        args:
+          - '--executor_input'
+          - '{{$}}'
+          - '--function_to_execute'
+          - data_tokenization
+        command:
+          - sh
+          - '-c'
+          - >
+
+            if ! [ -x "$(command -v pip)" ]; then
+                python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip
+            fi
+
+
+            PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet
+            --no-warn-script-location 'kfp==2.11.0' '--no-deps'
+            'typing-extensions>=3.7.4,<5; python_version<"3.9"' && "$0" "$@"
+          - sh
+          - '-ec'
+          - >
+            program_path=$(mktemp -d)
+
+
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+            _KFP_RUNTIME=true python3 -m
+            kfp.dsl.executor_main                        
+            --component_module_path                        
+            "$program_path/ephemeral_component.py"                         "$@"
+          - |+
+
+            import kfp
+            from kfp import dsl
+            from kfp.dsl import *
+            from typing import *
+
+            def data_tokenization(
+                input_dataset: Dataset,
+                model_name: str,
+                output_dataset: Output[Dataset],
+                dataset_text_column: str = "text"
+            ):
+                from datasets import load_from_disk
+                from transformers import AutoTokenizer
+
+                # Load the dataset from disk
+                dataset = load_from_disk(input_dataset.path)
+
+                # Load the tokenizer for the specified model
+                tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+                if tokenizer.pad_token is None:
+                    tokenizer.pad_token = tokenizer.eos_token  # Use the end-of-sequence token as padding
+
+                def tokenize_function(examples):
+                    return tokenizer(examples[dataset_text_column], padding="max_length", truncation=True)
+
+                # Apply the tokenizer to the dataset
+                tokenized_dataset = dataset.map(tokenize_function, batched=True)
+
+                # Save the tokenized dataset to the specified output path
+                tokenized_dataset.save_to_disk(output_dataset.path)
+
+        image: '2cassa2/kfp-runtime:1.0.0'
+    exec-model-fine-tuning:
+      container:
+        args:
+          - '--executor_input'
+          - '{{$}}'
+          - '--function_to_execute'
+          - model_fine_tuning
+        command:
+          - sh
+          - '-c'
+          - >
+
+            if ! [ -x "$(command -v pip)" ]; then
+                python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip
+            fi
+
+
+            PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet
+            --no-warn-script-location 'kfp==2.11.0' '--no-deps'
+            'typing-extensions>=3.7.4,<5; python_version<"3.9"'  &&  python3 -m
+            pip install --quiet --no-warn-script-location 'evaluate==0.4.3'
+            'peft==0.0.1' 'accelerate==0.21.0' && "$0" "$@"
+          - sh
+          - '-ec'
+          - >
+            program_path=$(mktemp -d)
+
+
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+            _KFP_RUNTIME=true python3 -m
+            kfp.dsl.executor_main                        
+            --component_module_path                        
+            "$program_path/ephemeral_component.py"                         "$@"
+          - |+
+
+            import kfp
+            from kfp import dsl
+            from kfp.dsl import *
+            from typing import *
+
+            def model_fine_tuning(
+                tokenized_data: Input[Dataset],
+                output_model_dir: Output[Dataset],
+                model_name: str = "distilgpt2",
+                epochs: int = 1
+            ):
+                from datasets import load_from_disk
+                from transformers import TrainingArguments, Trainer
+                from transformers import AutoModelForSequenceClassification
+                from peft import LoraConfig, get_peft_model, TaskType
+                import numpy as np
+                import evaluate
+
+                # Load tokenized data and model
+                dataset = load_from_disk(tokenized_data.path)
+
+                # Load the model
+                model = AutoModelForSequenceClassification.from_pretrained(
+                    "google-bert/bert-base-cased", 
+                    num_labels=5, 
+                    torch_dtype="auto"
+                )
+
+                # Set up LoRA configuration
+                lora_config = LoraConfig(
+                    task_type=TaskType.SEQ_CLS,  # Task type: Sequence Classification
+                    inference_mode=False,
+                    r=4,  # Low-rank dimension
+                    lora_alpha=32,  # Scaling parameter
+                    lora_dropout=0.1  # Dropout probability
+                )
+                for param in model.base_model.parameters():
+                    param.requires_grad = False
+                # Apply LoRA to the model
+                model = get_peft_model(model, lora_config)
+
+                # Load the metric
+                metric = evaluate.load("accuracy")
+
+                def compute_metrics(eval_pred):
+                    logits, labels = eval_pred
+                    predictions = np.argmax(logits, axis=-1)
+                    return metric.compute(predictions=predictions, references=labels)
+
+                # Define training arguments
+                training_args = TrainingArguments(
+                    output_dir="test_trainer",
+                    evaluation_strategy="epoch",
+                    per_device_train_batch_size=8,
+                    per_device_eval_batch_size=8,
+                    num_train_epochs=3,
+                    logging_dir="./logs",
+                    save_total_limit=2
+                )
+
+                # Initialize Trainer
+                trainer = Trainer(
+                    model=model,
+                    args=training_args,
+                    train_dataset=dataset["train"],
+                    eval_dataset=dataset["test"],
+                    compute_metrics=compute_metrics,
+                )
+
+                trainer.train()
+
+                # Save fine-tuned model
+                model.save_pretrained(output_model_dir.path)
+
+        image: '2cassa2/kfp-runtime:1.0.0'
+    exec-model-upload:
+      container:
+        args:
+          - '--executor_input'
+          - '{{$}}'
+          - '--function_to_execute'
+          - model_upload
+        command:
+          - sh
+          - '-c'
+          - >
+
+            if ! [ -x "$(command -v pip)" ]; then
+                python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip
+            fi
+
+
+            PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet
+            --no-warn-script-location 'kfp==2.11.0' '--no-deps'
+            'typing-extensions>=3.7.4,<5; python_version<"3.9"'  &&  python3 -m
+            pip install --quiet --no-warn-script-location 'kubernetes==31.0.0'
+            && "$0" "$@"
+          - sh
+          - '-ec'
+          - >
+            program_path=$(mktemp -d)
+
+
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+            _KFP_RUNTIME=true python3 -m
+            kfp.dsl.executor_main                        
+            --component_module_path                        
+            "$program_path/ephemeral_component.py"                         "$@"
+          - |+
+
+            import kfp
+            from kfp import dsl
+            from kfp.dsl import *
+            from typing import *
+
+            def model_upload(
+                model_dir: Input[Dataset],
+                original_model_name: str,
+                secret_name: str,
+                secret_namespace: str
+            ):
+                from kubernetes import client, config
+
+                # Load in-cluster Kubernetes config
+                config.load_incluster_config()
+
+                # Access the Kubernetes CoreV1API
+                v1 = client.CoreV1Api()
+
+                # Retrieve the secret
+                secret = v1.read_namespaced_secret(name=secret_name, namespace=secret_namespace)
+                hf_repo = secret.data["repo"]
+                hf_token = secret.data["token"]
+                # Decode the secret values (Kubernetes secrets are base64-encoded)
+                import base64
+                hf_repo = base64.b64decode(hf_repo).decode("utf-8")
+                hf_token = base64.b64decode(hf_token).decode("utf-8")
+
+                from huggingface_hub import login
+                from transformers import AutoTokenizer, AutoModelForCausalLM
+
+                # Login to Hugging Face
+                login(hf_token)
+
+                # Push model and tokenizer
+                model = AutoModelForCausalLM.from_pretrained(model_dir.path)
+                tokenizer = AutoTokenizer.from_pretrained(original_model_name)
+
+                model.push_to_hub(hf_repo)
+                tokenizer.push_to_hub(hf_repo)
+
+        image: '2cassa2/kfp-runtime:1.0.0'
+pipelineInfo:
+  name: huggingface-model-pipeline
+root:
+  dag:
+    tasks:
+      data-fetching:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-data-fetching
+        inputs:
+          parameters:
+            dataset_name:
+              componentInputParameter: dataset_name
+            splits:
+              runtimeValue:
+                constant:
+                  - split_name: train
+                    split_size: 1000
+                  - split_name: test
+                    split_size: 1000
+        taskInfo:
+          name: data-fetching
+      data-tokenization:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-data-tokenization
+        dependentTasks:
+          - data-fetching
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: data-fetching
+          parameters:
+            dataset_text_column:
+              componentInputParameter: dataset_text_column
+            model_name:
+              componentInputParameter: model_name
+        taskInfo:
+          name: data-tokenization
+      model-fine-tuning:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-model-fine-tuning
+        dependentTasks:
+          - data-tokenization
+        inputs:
+          artifacts:
+            tokenized_data:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: data-tokenization
+          parameters:
+            model_name:
+              componentInputParameter: model_name
+        taskInfo:
+          name: model-fine-tuning
+      model-upload:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-model-upload
+        dependentTasks:
+          - model-fine-tuning
+        inputs:
+          artifacts:
+            model_dir:
+              taskOutputArtifact:
+                outputArtifactKey: output_model_dir
+                producerTask: model-fine-tuning
+          parameters:
+            original_model_name:
+              componentInputParameter: model_name
+            secret_name:
+              runtimeValue:
+                constant: huggingface-secret
+            secret_namespace:
+              runtimeValue:
+                constant: kubeflow-user-example-com
+        taskInfo:
+          name: model-upload
+  inputDefinitions:
+    parameters:
+      dataset_name:
+        defaultValue: yelp_review_full
+        isOptional: true
+        parameterType: STRING
+      dataset_text_column:
+        defaultValue: text
+        isOptional: true
+        parameterType: STRING
+      max_length:
+        defaultValue: 128
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      model_name:
+        defaultValue: google-bert/bert-base-cased
+        isOptional: true
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.11.0

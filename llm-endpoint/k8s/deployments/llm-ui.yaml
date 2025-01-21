@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-ui
+  namespace: kubeflow-user-example-com 
+  labels:
+    app: llm-ui
+spec:
+  selector:
+    matchLabels:
+      app: llm-ui
+  template:
+    metadata:
+      labels:
+        app: llm-ui
+    spec:
+      containers:
+      - name: llm-ui-container
+        image: 2cassa2/llm-streamlit-ui:0.0.1
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8501
+        env:
+          - name: API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: llm-ui
+                key: api_url
+    
