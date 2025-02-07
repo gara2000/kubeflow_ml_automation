@@ -1,0 +1,325 @@
+{'created_at': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+ 'description': None,
+ 'display_name': 'pvc-test-pipeline 2025-01-27 21-11-10',
+ 'error': None,
+ 'experiment_id': '95654629-f2e4-4c5a-9eca-d7fd8fa8b2c6',
+ 'finished_at': datetime.datetime(2025, 1, 27, 21, 13, 18, tzinfo=tzlocal()),
+ 'pipeline_spec': {'pipeline_spec': {'components': {'comp-create-dataset': {'executorLabel': 'exec-create-dataset',
+                                                                            'inputDefinitions': {'parameters': {'file_prefix': {'parameterType': 'STRING'}}}}},
+                                     'deploymentSpec': {'executors': {'exec-create-dataset': {'container': {'args': ['--executor_input',
+                                                                                                                     '{{$}}',
+                                                                                                                     '--function_to_execute',
+                                                                                                                     'create_dataset'],
+                                                                                                            'command': ['sh',
+                                                                                                                        '-c',
+                                                                                                                        '\n'
+                                                                                                                        'if '
+                                                                                                                        '! '
+                                                                                                                        '[ '
+                                                                                                                        '-x '
+                                                                                                                        '"$(command '
+                                                                                                                        '-v '
+                                                                                                                        'pip)" '
+                                                                                                                        ']; '
+                                                                                                                        'then\n'
+                                                                                                                        '    '
+                                                                                                                        'python3 '
+                                                                                                                        '-m '
+                                                                                                                        'ensurepip '
+                                                                                                                        '|| '
+                                                                                                                        'python3 '
+                                                                                                                        '-m '
+                                                                                                                        'ensurepip '
+                                                                                                                        '--user '
+                                                                                                                        '|| '
+                                                                                                                        'apt-get '
+                                                                                                                        'install '
+                                                                                                                        'python3-pip\n'
+                                                                                                                        'fi\n'
+                                                                                                                        '\n'
+                                                                                                                        'PIP_DISABLE_PIP_VERSION_CHECK=1 '
+                                                                                                                        'python3 '
+                                                                                                                        '-m '
+                                                                                                                        'pip '
+                                                                                                                        'install '
+                                                                                                                        '--quiet '
+                                                                                                                        '--no-warn-script-location '
+                                                                                                                        "'kfp==2.11.0' "
+                                                                                                                        "'--no-deps' "
+                                                                                                                        "'typing-extensions>=3.7.4,<5; "
+                                                                                                                        'python_version<"3.9"\'  '
+                                                                                                                        '&&  '
+                                                                                                                        'python3 '
+                                                                                                                        '-m '
+                                                                                                                        'pip '
+                                                                                                                        'install '
+                                                                                                                        '--quiet '
+                                                                                                                        '--no-warn-script-location '
+                                                                                                                        "'scikit-learn==1.5.2' "
+                                                                                                                        "'pandas==2.2.3' "
+                                                                                                                        "'numpy==2.0.2' "
+                                                                                                                        '&& '
+                                                                                                                        '"$0" '
+                                                                                                                        '"$@"\n',
+                                                                                                                        'sh',
+                                                                                                                        '-ec',
+                                                                                                                        'program_path=$(mktemp '
+                                                                                                                        '-d)\n'
+                                                                                                                        '\n'
+                                                                                                                        'printf '
+                                                                                                                        '"%s" '
+                                                                                                                        '"$0" '
+                                                                                                                        '> '
+                                                                                                                        '"$program_path/ephemeral_component.py"\n'
+                                                                                                                        '_KFP_RUNTIME=true '
+                                                                                                                        'python3 '
+                                                                                                                        '-m '
+                                                                                                                        'kfp.dsl.executor_main                         '
+                                                                                                                        '--component_module_path                         '
+                                                                                                                        '"$program_path/ephemeral_component.py"                         '
+                                                                                                                        '"$@"\n',
+                                                                                                                        '\n'
+                                                                                                                        'import '
+                                                                                                                        'kfp\n'
+                                                                                                                        'from '
+                                                                                                                        'kfp '
+                                                                                                                        'import '
+                                                                                                                        'dsl\n'
+                                                                                                                        'from '
+                                                                                                                        'kfp.dsl '
+                                                                                                                        'import '
+                                                                                                                        '*\n'
+                                                                                                                        'from '
+                                                                                                                        'typing '
+                                                                                                                        'import '
+                                                                                                                        '*\n'
+                                                                                                                        '\n'
+                                                                                                                        'def '
+                                                                                                                        'create_dataset(\n'
+                                                                                                                        '    '
+                                                                                                                        'file_prefix: '
+                                                                                                                        'str\n'
+                                                                                                                        '):\n'
+                                                                                                                        '    '
+                                                                                                                        'import '
+                                                                                                                        'pandas '
+                                                                                                                        'as '
+                                                                                                                        'pd\n'
+                                                                                                                        '\n'
+                                                                                                                        '    '
+                                                                                                                        'csv_url '
+                                                                                                                        '= '
+                                                                                                                        "'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'\n"
+                                                                                                                        '    '
+                                                                                                                        'col_names '
+                                                                                                                        '= '
+                                                                                                                        '[\n'
+                                                                                                                        '        '
+                                                                                                                        "'Sepal_Length', "
+                                                                                                                        "'Sepal_Width', "
+                                                                                                                        "'Petal_Length', "
+                                                                                                                        "'Petal_Width', "
+                                                                                                                        "'Labels'\n"
+                                                                                                                        '    '
+                                                                                                                        ']\n'
+                                                                                                                        '    '
+                                                                                                                        'df '
+                                                                                                                        '= '
+                                                                                                                        'pd.read_csv(csv_url, '
+                                                                                                                        'names=col_names)\n'
+                                                                                                                        '\n'
+                                                                                                                        '    '
+                                                                                                                        'with '
+                                                                                                                        "open(f'/data/{file_prefix}.csv', "
+                                                                                                                        "'w') "
+                                                                                                                        'as '
+                                                                                                                        'f:\n'
+                                                                                                                        '        '
+                                                                                                                        'df.to_csv(f)\n'
+                                                                                                                        '\n'],
+                                                                                                            'image': 'python:3.9'}}}},
+                                     'pipelineInfo': {'name': 'pvc-test-pipeline'},
+                                     'root': {'dag': {'tasks': {'create-dataset': {'cachingOptions': {'enableCache': True},
+                                                                                   'componentRef': {'name': 'comp-create-dataset'},
+                                                                                   'inputs': {'parameters': {'file_prefix': {'runtimeValue': {'constant': 'task1'}}}},
+                                                                                   'taskInfo': {'name': 'create-dataset'}}}}},
+                                     'schemaVersion': '2.1.0',
+                                     'sdkVersion': 'kfp-2.11.0'},
+                   'platform_spec': {'platforms': {'kubernetes': {'deploymentSpec': {'executors': {'exec-create-dataset': {'pvcMount': [{'constant': 'model-registry-pvc',
+                                                                                                                                         'mountPath': '/data'}]}}}}}}},
+ 'pipeline_version_id': None,
+ 'pipeline_version_reference': None,
+ 'recurring_run_id': None,
+ 'run_details': {'pipeline_context_id': None,
+                 'pipeline_run_context_id': None,
+                 'task_details': [{'child_tasks': [{'pod_name': 'pvc-test-pipeline-p6tpd-1445690511',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+                                   'display_name': 'root-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 21, 11, 35, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': '9ad1e9cd-a975-4617-8be7-abfe03da8f35',
+                                   'start_time': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 11, 11, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 11, 21, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 11, 46, tzinfo=tzlocal())}],
+                                   'task_id': '1a23cf69-7556-4ef7-849f-31cad894a2ed'},
+                                  {'child_tasks': None,
+                                   'create_time': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+                                   'display_name': 'executor',
+                                   'end_time': datetime.datetime(2025, 1, 27, 21, 13, 8, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': '9ad1e9cd-a975-4617-8be7-abfe03da8f35',
+                                   'start_time': datetime.datetime(2025, 1, 27, 21, 12, 15, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 12, 16, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 12, 26, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 13, 19, tzinfo=tzlocal())}],
+                                   'task_id': '47ff8f72-4679-423e-ada9-22170ffccf5e'},
+                                  {'child_tasks': None,
+                                   'create_time': datetime.datetime(2025, 1, 27, 21, 12, 22, tzinfo=tzlocal()),
+                                   'display_name': None,
+                                   'end_time': datetime.datetime(2025, 1, 27, 21, 13, 7, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': '42',
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': '9ad1e9cd-a975-4617-8be7-abfe03da8f35',
+                                   'start_time': datetime.datetime(2025, 1, 27, 21, 12, 22, tzinfo=tzlocal()),
+                                   'state': None,
+                                   'state_history': None,
+                                   'task_id': '667bf3b4-09ff-4b68-b76c-e012faa09961'},
+                                  {'child_tasks': [{'pod_name': 'pvc-test-pipeline-p6tpd-3472273825',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+                                   'display_name': 'create-dataset',
+                                   'end_time': datetime.datetime(2025, 1, 27, 21, 13, 18, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': '9ad1e9cd-a975-4617-8be7-abfe03da8f35',
+                                   'start_time': datetime.datetime(2025, 1, 27, 21, 12, 15, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 12, 16, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 13, 19, tzinfo=tzlocal())}],
+                                   'task_id': '6dfa5557-a717-4fba-8ed4-21713e6c109c'},
+                                  {'child_tasks': [{'pod_name': 'pvc-test-pipeline-p6tpd-3319022264',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+                                   'display_name': 'pvc-test-pipeline-p6tpd',
+                                   'end_time': datetime.datetime(2025, 1, 27, 21, 13, 18, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': '9ad1e9cd-a975-4617-8be7-abfe03da8f35',
+                                   'start_time': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 11, 11, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 13, 19, tzinfo=tzlocal())}],
+                                   'task_id': '731933cd-075c-492d-8556-657749e0add2'},
+                                  {'child_tasks': [{'pod_name': 'pvc-test-pipeline-p6tpd-1050585519',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+                                   'display_name': 'root',
+                                   'end_time': datetime.datetime(2025, 1, 27, 21, 13, 18, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': '9ad1e9cd-a975-4617-8be7-abfe03da8f35',
+                                   'start_time': datetime.datetime(2025, 1, 27, 21, 11, 45, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 11, 46, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 13, 19, tzinfo=tzlocal())}],
+                                   'task_id': 'cd4bfeba-7999-4dad-a410-de0399cf1e5b'},
+                                  {'child_tasks': [{'pod_name': 'pvc-test-pipeline-p6tpd-2530862650',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+                                   'display_name': 'create-dataset-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 21, 12, 6, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': '9ad1e9cd-a975-4617-8be7-abfe03da8f35',
+                                   'start_time': datetime.datetime(2025, 1, 27, 21, 11, 45, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 11, 46, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 11, 56, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 21, 12, 16, tzinfo=tzlocal())}],
+                                   'task_id': 'e3c04fa4-d08f-44f0-8abb-269546d62abc'}]},
+ 'run_id': '9ad1e9cd-a975-4617-8be7-abfe03da8f35',
+ 'runtime_config': None,
+ 'scheduled_at': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal()),
+ 'service_account': 'default-editor',
+ 'state': 'SUCCEEDED',
+ 'state_history': [{'error': None,
+                    'state': 'PENDING',
+                    'update_time': datetime.datetime(2025, 1, 27, 21, 11, 10, tzinfo=tzlocal())},
+                   {'error': None,
+                    'state': 'RUNNING',
+                    'update_time': datetime.datetime(2025, 1, 27, 21, 11, 11, tzinfo=tzlocal())},
+                   {'error': None,
+                    'state': 'SUCCEEDED',
+                    'update_time': datetime.datetime(2025, 1, 27, 21, 13, 19, tzinfo=tzlocal())}],
+ 'storage_state': 'AVAILABLE'}

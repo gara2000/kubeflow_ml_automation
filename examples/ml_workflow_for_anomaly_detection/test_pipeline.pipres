@@ -1,0 +1,798 @@
+{'created_at': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+ 'description': None,
+ 'display_name': 'iris-training-pipeline 2025-01-27 17-27-22',
+ 'error': None,
+ 'experiment_id': '95654629-f2e4-4c5a-9eca-d7fd8fa8b2c6',
+ 'finished_at': datetime.datetime(2025, 1, 27, 17, 31, 38, tzinfo=tzlocal()),
+ 'pipeline_spec': {'components': {'comp-create-dataset': {'executorLabel': 'exec-create-dataset',
+                                                          'outputDefinitions': {'artifacts': {'iris_dataset': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                'schemaVersion': '0.0.1'}}}}},
+                                  'comp-for-loop-1': {'dag': {'tasks': {'train-model': {'cachingOptions': {'enableCache': True},
+                                                                                        'componentRef': {'name': 'comp-train-model'},
+                                                                                        'inputs': {'artifacts': {'normalized_iris_dataset': {'componentInputArtifact': 'pipelinechannel--normalize-dataset-normalized_iris_dataset'}},
+                                                                                                   'parameters': {'n_neighbors': {'componentInputParameter': 'pipelinechannel--neighbors-loop-item'}}},
+                                                                                        'taskInfo': {'name': 'train-model'}}}},
+                                                      'inputDefinitions': {'artifacts': {'pipelinechannel--normalize-dataset-normalized_iris_dataset': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                                                         'schemaVersion': '0.0.1'}}},
+                                                                           'parameters': {'pipelinechannel--neighbors': {'parameterType': 'LIST'},
+                                                                                          'pipelinechannel--neighbors-loop-item': {'parameterType': 'NUMBER_INTEGER'}}}},
+                                  'comp-normalize-dataset': {'executorLabel': 'exec-normalize-dataset',
+                                                             'inputDefinitions': {'artifacts': {'input_iris_dataset': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                        'schemaVersion': '0.0.1'}}},
+                                                                                  'parameters': {'min_max_scaler': {'parameterType': 'BOOLEAN'},
+                                                                                                 'standard_scaler': {'parameterType': 'BOOLEAN'}}},
+                                                             'outputDefinitions': {'artifacts': {'normalized_iris_dataset': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                              'schemaVersion': '0.0.1'}}}}},
+                                  'comp-train-model': {'executorLabel': 'exec-train-model',
+                                                       'inputDefinitions': {'artifacts': {'normalized_iris_dataset': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                       'schemaVersion': '0.0.1'}}},
+                                                                            'parameters': {'n_neighbors': {'parameterType': 'NUMBER_INTEGER'}}},
+                                                       'outputDefinitions': {'artifacts': {'model': {'artifactType': {'schemaTitle': 'system.Model',
+                                                                                                                      'schemaVersion': '0.0.1'}}}}}},
+                   'deploymentSpec': {'executors': {'exec-create-dataset': {'container': {'args': ['--executor_input',
+                                                                                                   '{{$}}',
+                                                                                                   '--function_to_execute',
+                                                                                                   'create_dataset'],
+                                                                                          'command': ['sh',
+                                                                                                      '-c',
+                                                                                                      '\n'
+                                                                                                      'if '
+                                                                                                      '! '
+                                                                                                      '[ '
+                                                                                                      '-x '
+                                                                                                      '"$(command '
+                                                                                                      '-v '
+                                                                                                      'pip)" '
+                                                                                                      ']; '
+                                                                                                      'then\n'
+                                                                                                      '    '
+                                                                                                      'python3 '
+                                                                                                      '-m '
+                                                                                                      'ensurepip '
+                                                                                                      '|| '
+                                                                                                      'python3 '
+                                                                                                      '-m '
+                                                                                                      'ensurepip '
+                                                                                                      '--user '
+                                                                                                      '|| '
+                                                                                                      'apt-get '
+                                                                                                      'install '
+                                                                                                      'python3-pip\n'
+                                                                                                      'fi\n'
+                                                                                                      '\n'
+                                                                                                      'PIP_DISABLE_PIP_VERSION_CHECK=1 '
+                                                                                                      'python3 '
+                                                                                                      '-m '
+                                                                                                      'pip '
+                                                                                                      'install '
+                                                                                                      '--quiet '
+                                                                                                      '--no-warn-script-location '
+                                                                                                      "'kfp==2.11.0' "
+                                                                                                      "'--no-deps' "
+                                                                                                      "'typing-extensions>=3.7.4,<5; "
+                                                                                                      'python_version<"3.9"\'  '
+                                                                                                      '&&  '
+                                                                                                      'python3 '
+                                                                                                      '-m '
+                                                                                                      'pip '
+                                                                                                      'install '
+                                                                                                      '--quiet '
+                                                                                                      '--no-warn-script-location '
+                                                                                                      "'scikit-learn==1.5.2' "
+                                                                                                      "'pandas==2.2.3' "
+                                                                                                      "'numpy==2.0.2' "
+                                                                                                      '&& '
+                                                                                                      '"$0" '
+                                                                                                      '"$@"\n',
+                                                                                                      'sh',
+                                                                                                      '-ec',
+                                                                                                      'program_path=$(mktemp '
+                                                                                                      '-d)\n'
+                                                                                                      '\n'
+                                                                                                      'printf '
+                                                                                                      '"%s" '
+                                                                                                      '"$0" '
+                                                                                                      '> '
+                                                                                                      '"$program_path/ephemeral_component.py"\n'
+                                                                                                      '_KFP_RUNTIME=true '
+                                                                                                      'python3 '
+                                                                                                      '-m '
+                                                                                                      'kfp.dsl.executor_main                         '
+                                                                                                      '--component_module_path                         '
+                                                                                                      '"$program_path/ephemeral_component.py"                         '
+                                                                                                      '"$@"\n',
+                                                                                                      '\n'
+                                                                                                      'import '
+                                                                                                      'kfp\n'
+                                                                                                      'from '
+                                                                                                      'kfp '
+                                                                                                      'import '
+                                                                                                      'dsl\n'
+                                                                                                      'from '
+                                                                                                      'kfp.dsl '
+                                                                                                      'import '
+                                                                                                      '*\n'
+                                                                                                      'from '
+                                                                                                      'typing '
+                                                                                                      'import '
+                                                                                                      '*\n'
+                                                                                                      '\n'
+                                                                                                      'def '
+                                                                                                      'create_dataset(iris_dataset: '
+                                                                                                      'Output[Dataset]):\n'
+                                                                                                      '    '
+                                                                                                      'import '
+                                                                                                      'pandas '
+                                                                                                      'as '
+                                                                                                      'pd\n'
+                                                                                                      '\n'
+                                                                                                      '    '
+                                                                                                      'csv_url '
+                                                                                                      '= '
+                                                                                                      "'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'\n"
+                                                                                                      '    '
+                                                                                                      'col_names '
+                                                                                                      '= '
+                                                                                                      '[\n'
+                                                                                                      '        '
+                                                                                                      "'Sepal_Length', "
+                                                                                                      "'Sepal_Width', "
+                                                                                                      "'Petal_Length', "
+                                                                                                      "'Petal_Width', "
+                                                                                                      "'Labels'\n"
+                                                                                                      '    '
+                                                                                                      ']\n'
+                                                                                                      '    '
+                                                                                                      'df '
+                                                                                                      '= '
+                                                                                                      'pd.read_csv(csv_url, '
+                                                                                                      'names=col_names)\n'
+                                                                                                      '\n'
+                                                                                                      '    '
+                                                                                                      'with '
+                                                                                                      'open(iris_dataset.path, '
+                                                                                                      "'w') "
+                                                                                                      'as '
+                                                                                                      'f:\n'
+                                                                                                      '        '
+                                                                                                      'df.to_csv(f)\n'
+                                                                                                      '\n'],
+                                                                                          'image': 'python:3.9'}},
+                                                    'exec-normalize-dataset': {'container': {'args': ['--executor_input',
+                                                                                                      '{{$}}',
+                                                                                                      '--function_to_execute',
+                                                                                                      'normalize_dataset'],
+                                                                                             'command': ['sh',
+                                                                                                         '-c',
+                                                                                                         '\n'
+                                                                                                         'if '
+                                                                                                         '! '
+                                                                                                         '[ '
+                                                                                                         '-x '
+                                                                                                         '"$(command '
+                                                                                                         '-v '
+                                                                                                         'pip)" '
+                                                                                                         ']; '
+                                                                                                         'then\n'
+                                                                                                         '    '
+                                                                                                         'python3 '
+                                                                                                         '-m '
+                                                                                                         'ensurepip '
+                                                                                                         '|| '
+                                                                                                         'python3 '
+                                                                                                         '-m '
+                                                                                                         'ensurepip '
+                                                                                                         '--user '
+                                                                                                         '|| '
+                                                                                                         'apt-get '
+                                                                                                         'install '
+                                                                                                         'python3-pip\n'
+                                                                                                         'fi\n'
+                                                                                                         '\n'
+                                                                                                         'PIP_DISABLE_PIP_VERSION_CHECK=1 '
+                                                                                                         'python3 '
+                                                                                                         '-m '
+                                                                                                         'pip '
+                                                                                                         'install '
+                                                                                                         '--quiet '
+                                                                                                         '--no-warn-script-location '
+                                                                                                         "'kfp==2.11.0' "
+                                                                                                         "'--no-deps' "
+                                                                                                         "'typing-extensions>=3.7.4,<5; "
+                                                                                                         'python_version<"3.9"\'  '
+                                                                                                         '&&  '
+                                                                                                         'python3 '
+                                                                                                         '-m '
+                                                                                                         'pip '
+                                                                                                         'install '
+                                                                                                         '--quiet '
+                                                                                                         '--no-warn-script-location '
+                                                                                                         "'scikit-learn==1.5.2' "
+                                                                                                         "'pandas==2.2.3' "
+                                                                                                         "'numpy==2.0.2' "
+                                                                                                         '&& '
+                                                                                                         '"$0" '
+                                                                                                         '"$@"\n',
+                                                                                                         'sh',
+                                                                                                         '-ec',
+                                                                                                         'program_path=$(mktemp '
+                                                                                                         '-d)\n'
+                                                                                                         '\n'
+                                                                                                         'printf '
+                                                                                                         '"%s" '
+                                                                                                         '"$0" '
+                                                                                                         '> '
+                                                                                                         '"$program_path/ephemeral_component.py"\n'
+                                                                                                         '_KFP_RUNTIME=true '
+                                                                                                         'python3 '
+                                                                                                         '-m '
+                                                                                                         'kfp.dsl.executor_main                         '
+                                                                                                         '--component_module_path                         '
+                                                                                                         '"$program_path/ephemeral_component.py"                         '
+                                                                                                         '"$@"\n',
+                                                                                                         '\n'
+                                                                                                         'import '
+                                                                                                         'kfp\n'
+                                                                                                         'from '
+                                                                                                         'kfp '
+                                                                                                         'import '
+                                                                                                         'dsl\n'
+                                                                                                         'from '
+                                                                                                         'kfp.dsl '
+                                                                                                         'import '
+                                                                                                         '*\n'
+                                                                                                         'from '
+                                                                                                         'typing '
+                                                                                                         'import '
+                                                                                                         '*\n'
+                                                                                                         '\n'
+                                                                                                         'def '
+                                                                                                         'normalize_dataset(\n'
+                                                                                                         '    '
+                                                                                                         'input_iris_dataset: '
+                                                                                                         'Input[Dataset],\n'
+                                                                                                         '    '
+                                                                                                         'normalized_iris_dataset: '
+                                                                                                         'Output[Dataset],\n'
+                                                                                                         '    '
+                                                                                                         'standard_scaler: '
+                                                                                                         'bool,\n'
+                                                                                                         '    '
+                                                                                                         'min_max_scaler: '
+                                                                                                         'bool,\n'
+                                                                                                         '):\n'
+                                                                                                         '    '
+                                                                                                         'if '
+                                                                                                         'standard_scaler '
+                                                                                                         'is '
+                                                                                                         'min_max_scaler:\n'
+                                                                                                         '        '
+                                                                                                         'raise '
+                                                                                                         'ValueError(\n'
+                                                                                                         '            '
+                                                                                                         "'Exactly "
+                                                                                                         'one '
+                                                                                                         'of '
+                                                                                                         'standard_scaler '
+                                                                                                         'or '
+                                                                                                         'min_max_scaler '
+                                                                                                         'must '
+                                                                                                         'be '
+                                                                                                         "True.')\n"
+                                                                                                         '\n'
+                                                                                                         '    '
+                                                                                                         'import '
+                                                                                                         'pandas '
+                                                                                                         'as '
+                                                                                                         'pd\n'
+                                                                                                         '    '
+                                                                                                         'from '
+                                                                                                         'sklearn.preprocessing '
+                                                                                                         'import '
+                                                                                                         'MinMaxScaler\n'
+                                                                                                         '    '
+                                                                                                         'from '
+                                                                                                         'sklearn.preprocessing '
+                                                                                                         'import '
+                                                                                                         'StandardScaler\n'
+                                                                                                         '\n'
+                                                                                                         '    '
+                                                                                                         'with '
+                                                                                                         'open(input_iris_dataset.path) '
+                                                                                                         'as '
+                                                                                                         'f:\n'
+                                                                                                         '        '
+                                                                                                         'df '
+                                                                                                         '= '
+                                                                                                         'pd.read_csv(f)\n'
+                                                                                                         '    '
+                                                                                                         'labels '
+                                                                                                         '= '
+                                                                                                         "df.pop('Labels')\n"
+                                                                                                         '\n'
+                                                                                                         '    '
+                                                                                                         'if '
+                                                                                                         'standard_scaler:\n'
+                                                                                                         '        '
+                                                                                                         'scaler '
+                                                                                                         '= '
+                                                                                                         'StandardScaler()\n'
+                                                                                                         '    '
+                                                                                                         'if '
+                                                                                                         'min_max_scaler:\n'
+                                                                                                         '        '
+                                                                                                         'scaler '
+                                                                                                         '= '
+                                                                                                         'MinMaxScaler()\n'
+                                                                                                         '\n'
+                                                                                                         '    '
+                                                                                                         'df '
+                                                                                                         '= '
+                                                                                                         'pd.DataFrame(scaler.fit_transform(df))\n'
+                                                                                                         '    '
+                                                                                                         "df['Labels'] "
+                                                                                                         '= '
+                                                                                                         'labels\n'
+                                                                                                         '    '
+                                                                                                         'with '
+                                                                                                         'open(normalized_iris_dataset.path, '
+                                                                                                         "'w') "
+                                                                                                         'as '
+                                                                                                         'f:\n'
+                                                                                                         '        '
+                                                                                                         'df.to_csv(f)\n'
+                                                                                                         '\n'],
+                                                                                             'image': 'python:3.9'}},
+                                                    'exec-train-model': {'container': {'args': ['--executor_input',
+                                                                                                '{{$}}',
+                                                                                                '--function_to_execute',
+                                                                                                'train_model'],
+                                                                                       'command': ['sh',
+                                                                                                   '-c',
+                                                                                                   '\n'
+                                                                                                   'if '
+                                                                                                   '! '
+                                                                                                   '[ '
+                                                                                                   '-x '
+                                                                                                   '"$(command '
+                                                                                                   '-v '
+                                                                                                   'pip)" '
+                                                                                                   ']; '
+                                                                                                   'then\n'
+                                                                                                   '    '
+                                                                                                   'python3 '
+                                                                                                   '-m '
+                                                                                                   'ensurepip '
+                                                                                                   '|| '
+                                                                                                   'python3 '
+                                                                                                   '-m '
+                                                                                                   'ensurepip '
+                                                                                                   '--user '
+                                                                                                   '|| '
+                                                                                                   'apt-get '
+                                                                                                   'install '
+                                                                                                   'python3-pip\n'
+                                                                                                   'fi\n'
+                                                                                                   '\n'
+                                                                                                   'PIP_DISABLE_PIP_VERSION_CHECK=1 '
+                                                                                                   'python3 '
+                                                                                                   '-m '
+                                                                                                   'pip '
+                                                                                                   'install '
+                                                                                                   '--quiet '
+                                                                                                   '--no-warn-script-location '
+                                                                                                   "'kfp==2.11.0' "
+                                                                                                   "'--no-deps' "
+                                                                                                   "'typing-extensions>=3.7.4,<5; "
+                                                                                                   'python_version<"3.9"\'  '
+                                                                                                   '&&  '
+                                                                                                   'python3 '
+                                                                                                   '-m '
+                                                                                                   'pip '
+                                                                                                   'install '
+                                                                                                   '--quiet '
+                                                                                                   '--no-warn-script-location '
+                                                                                                   "'scikit-learn==1.5.2' "
+                                                                                                   "'pandas==2.2.3' "
+                                                                                                   "'numpy==2.0.2' "
+                                                                                                   '&& '
+                                                                                                   '"$0" '
+                                                                                                   '"$@"\n',
+                                                                                                   'sh',
+                                                                                                   '-ec',
+                                                                                                   'program_path=$(mktemp '
+                                                                                                   '-d)\n'
+                                                                                                   '\n'
+                                                                                                   'printf '
+                                                                                                   '"%s" '
+                                                                                                   '"$0" '
+                                                                                                   '> '
+                                                                                                   '"$program_path/ephemeral_component.py"\n'
+                                                                                                   '_KFP_RUNTIME=true '
+                                                                                                   'python3 '
+                                                                                                   '-m '
+                                                                                                   'kfp.dsl.executor_main                         '
+                                                                                                   '--component_module_path                         '
+                                                                                                   '"$program_path/ephemeral_component.py"                         '
+                                                                                                   '"$@"\n',
+                                                                                                   '\n'
+                                                                                                   'import '
+                                                                                                   'kfp\n'
+                                                                                                   'from '
+                                                                                                   'kfp '
+                                                                                                   'import '
+                                                                                                   'dsl\n'
+                                                                                                   'from '
+                                                                                                   'kfp.dsl '
+                                                                                                   'import '
+                                                                                                   '*\n'
+                                                                                                   'from '
+                                                                                                   'typing '
+                                                                                                   'import '
+                                                                                                   '*\n'
+                                                                                                   '\n'
+                                                                                                   'def '
+                                                                                                   'train_model(\n'
+                                                                                                   '    '
+                                                                                                   'normalized_iris_dataset: '
+                                                                                                   'Input[Dataset],\n'
+                                                                                                   '    '
+                                                                                                   'model: '
+                                                                                                   'Output[Model],\n'
+                                                                                                   '    '
+                                                                                                   'n_neighbors: '
+                                                                                                   'int,\n'
+                                                                                                   '):\n'
+                                                                                                   '    '
+                                                                                                   'import '
+                                                                                                   'pickle\n'
+                                                                                                   '\n'
+                                                                                                   '    '
+                                                                                                   'import '
+                                                                                                   'pandas '
+                                                                                                   'as '
+                                                                                                   'pd\n'
+                                                                                                   '    '
+                                                                                                   'from '
+                                                                                                   'sklearn.model_selection '
+                                                                                                   'import '
+                                                                                                   'train_test_split\n'
+                                                                                                   '    '
+                                                                                                   'from '
+                                                                                                   'sklearn.neighbors '
+                                                                                                   'import '
+                                                                                                   'KNeighborsClassifier\n'
+                                                                                                   '\n'
+                                                                                                   '    '
+                                                                                                   'with '
+                                                                                                   'open(normalized_iris_dataset.path) '
+                                                                                                   'as '
+                                                                                                   'f:\n'
+                                                                                                   '        '
+                                                                                                   'df '
+                                                                                                   '= '
+                                                                                                   'pd.read_csv(f)\n'
+                                                                                                   '\n'
+                                                                                                   '    '
+                                                                                                   'y '
+                                                                                                   '= '
+                                                                                                   "df.pop('Labels')\n"
+                                                                                                   '    '
+                                                                                                   'X '
+                                                                                                   '= '
+                                                                                                   'df\n'
+                                                                                                   '\n'
+                                                                                                   '    '
+                                                                                                   'X_train, '
+                                                                                                   'X_test, '
+                                                                                                   'y_train, '
+                                                                                                   'y_test '
+                                                                                                   '= '
+                                                                                                   'train_test_split(X, '
+                                                                                                   'y, '
+                                                                                                   'random_state=0)\n'
+                                                                                                   '\n'
+                                                                                                   '    '
+                                                                                                   'clf '
+                                                                                                   '= '
+                                                                                                   'KNeighborsClassifier(n_neighbors=n_neighbors)\n'
+                                                                                                   '    '
+                                                                                                   'clf.fit(X_train, '
+                                                                                                   'y_train)\n'
+                                                                                                   '    '
+                                                                                                   'with '
+                                                                                                   'open(model.path, '
+                                                                                                   "'wb') "
+                                                                                                   'as '
+                                                                                                   'f:\n'
+                                                                                                   '        '
+                                                                                                   'pickle.dump(clf, '
+                                                                                                   'f)\n'
+                                                                                                   '\n'],
+                                                                                       'image': 'python:3.9'}}}},
+                   'pipelineInfo': {'name': 'iris-training-pipeline'},
+                   'root': {'dag': {'tasks': {'create-dataset': {'cachingOptions': {'enableCache': True},
+                                                                 'componentRef': {'name': 'comp-create-dataset'},
+                                                                 'taskInfo': {'name': 'create-dataset'}},
+                                              'for-loop-1': {'componentRef': {'name': 'comp-for-loop-1'},
+                                                             'dependentTasks': ['normalize-dataset'],
+                                                             'inputs': {'artifacts': {'pipelinechannel--normalize-dataset-normalized_iris_dataset': {'taskOutputArtifact': {'outputArtifactKey': 'normalized_iris_dataset',
+                                                                                                                                                                            'producerTask': 'normalize-dataset'}}},
+                                                                        'parameters': {'pipelinechannel--neighbors': {'componentInputParameter': 'neighbors'}}},
+                                                             'parameterIterator': {'itemInput': 'pipelinechannel--neighbors-loop-item',
+                                                                                   'items': {'inputParameter': 'pipelinechannel--neighbors'}},
+                                                             'taskInfo': {'name': 'for-loop-1'}},
+                                              'normalize-dataset': {'cachingOptions': {'enableCache': True},
+                                                                    'componentRef': {'name': 'comp-normalize-dataset'},
+                                                                    'dependentTasks': ['create-dataset'],
+                                                                    'inputs': {'artifacts': {'input_iris_dataset': {'taskOutputArtifact': {'outputArtifactKey': 'iris_dataset',
+                                                                                                                                           'producerTask': 'create-dataset'}}},
+                                                                               'parameters': {'min_max_scaler': {'runtimeValue': {'constant': False}},
+                                                                                              'standard_scaler': {'runtimeValue': {'constant': True}}}},
+                                                                    'taskInfo': {'name': 'normalize-dataset'}}}},
+                            'inputDefinitions': {'parameters': {'min_max_scaler': {'parameterType': 'BOOLEAN'},
+                                                                'neighbors': {'parameterType': 'LIST'},
+                                                                'standard_scaler': {'parameterType': 'BOOLEAN'}}}},
+                   'schemaVersion': '2.1.0',
+                   'sdkVersion': 'kfp-2.11.0'},
+ 'pipeline_version_id': None,
+ 'pipeline_version_reference': None,
+ 'recurring_run_id': None,
+ 'run_details': {'pipeline_context_id': None,
+                 'pipeline_run_context_id': None,
+                 'task_details': [{'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-1734069497',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'iris-training-pipeline-8267p',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 31, 38, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'state': 'FAILED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 27, 23, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'FAILED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 31, 39, tzinfo=tzlocal())}],
+                                   'task_id': '01d8aad9-0f88-463f-8c24-037d19b02bf4'},
+                                  {'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-1689485018',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'create-dataset',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 29, 13, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 29, 13, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 29, 14, tzinfo=tzlocal())}],
+                                   'task_id': '13645a1e-0b1a-4f5d-8b97-3893486cf5bf'},
+                                  {'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-3892982592',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'normalize-dataset-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 30, 34, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 29, 13, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 29, 14, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 29, 24, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 30, 45, tzinfo=tzlocal())}],
+                                   'task_id': '2df8a4cf-035e-4f87-a5a3-d51fd0cd729e'},
+                                  {'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-260292916',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'root',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 31, 38, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 28, 4, tzinfo=tzlocal()),
+                                   'state': 'FAILED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 28, 5, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'FAILED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 31, 39, tzinfo=tzlocal())}],
+                                   'task_id': '3294c0e3-7e31-406d-8330-93094869b8a2'},
+                                  {'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-483023631',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'for-loop-1-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 31, 28, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 30, 44, tzinfo=tzlocal()),
+                                   'state': 'FAILED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 30, 45, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 30, 55, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'FAILED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 31, 39, tzinfo=tzlocal())}],
+                                   'task_id': '673e9e01-4599-4d74-b720-59218a333994'},
+                                  {'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-3358315412',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'root-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 27, 54, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 27, 23, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 27, 33, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 28, 5, tzinfo=tzlocal())}],
+                                   'task_id': '8dc8c2cd-f6cf-4115-9eb3-85a1426bfbf1'},
+                                  {'child_tasks': None,
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'for-loop-1-iterations',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 31, 38, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 31, 38, tzinfo=tzlocal()),
+                                   'state': None,
+                                   'state_history': [{'error': None,
+                                                      'state': None,
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 31, 39, tzinfo=tzlocal())}],
+                                   'task_id': '92f5947e-b2d0-47d4-a6c3-862356857aad'},
+                                  {'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-1389800299',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'normalize-dataset',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 30, 44, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 30, 44, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 30, 45, tzinfo=tzlocal())}],
+                                   'task_id': '93bdfcb8-3303-4772-b4ad-b5ce85ac2123'},
+                                  {'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-1024645437',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'executor',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 29, 13, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 29, 13, tzinfo=tzlocal()),
+                                   'state': 'SKIPPED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'SKIPPED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 29, 14, tzinfo=tzlocal())}],
+                                   'task_id': 'bb934053-6711-4db4-ace4-ccfe90385255'},
+                                  {'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-1215867299',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'create-dataset-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 29, 3, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 28, 4, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 28, 5, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 28, 15, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 29, 14, tzinfo=tzlocal())}],
+                                   'task_id': 'd1725a0e-1497-4948-b553-c3beb6df9c01'},
+                                  {'child_tasks': [{'pod_name': 'iris-training-pipeline-8267p-2629496285',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+                                   'display_name': 'executor',
+                                   'end_time': datetime.datetime(2025, 1, 27, 17, 30, 44, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+                                   'start_time': datetime.datetime(2025, 1, 27, 17, 30, 44, tzinfo=tzlocal()),
+                                   'state': 'SKIPPED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'SKIPPED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 17, 30, 45, tzinfo=tzlocal())}],
+                                   'task_id': 'dd75bee8-5d6c-4397-835a-6948a9a6eb3b'}]},
+ 'run_id': 'e9f66454-51ee-4cdf-8d02-e051bde079cc',
+ 'runtime_config': {'parameters': {'min_max_scaler': True,
+                                   'neighbors': [2, 6, 9],
+                                   'standard_scaler': False},
+                    'pipeline_root': None},
+ 'scheduled_at': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal()),
+ 'service_account': 'default-editor',
+ 'state': 'FAILED',
+ 'state_history': [{'error': None,
+                    'state': 'PENDING',
+                    'update_time': datetime.datetime(2025, 1, 27, 17, 27, 22, tzinfo=tzlocal())},
+                   {'error': None,
+                    'state': 'RUNNING',
+                    'update_time': datetime.datetime(2025, 1, 27, 17, 27, 23, tzinfo=tzlocal())},
+                   {'error': None,
+                    'state': 'FAILED',
+                    'update_time': datetime.datetime(2025, 1, 27, 17, 31, 39, tzinfo=tzlocal())}],
+ 'storage_state': 'AVAILABLE'}

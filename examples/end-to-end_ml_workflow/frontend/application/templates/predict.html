@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h2>Make a Prediction</h2>
+    <form action="{{ url_for('predict') }}" method="post" class="form">
+        <label for="input_data1">x1:</label>
+        <input type="text" id="input_data1" name="x1" required>
+        <label for="input_data2">x2:</label>
+        <input type="text" id="input_data2" name="x2" required>
+        <label for="input_data3">x3:</label>
+        <input type="text" id="input_data3" name="x3" required>
+        <label for="input_data4">x4:</label>
+        <input type="text" id="input_data4" name="x4" required>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

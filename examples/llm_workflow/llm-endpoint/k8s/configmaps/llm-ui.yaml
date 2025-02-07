@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llm-ui
+  namespace: kubeflow-user-example-com
+  labels:
+    app: llm-ui
+data:
+  api_url: "http://llm-api.kubeflow-user-example-com.svc.cluster.local/generate" # complete this with the model url

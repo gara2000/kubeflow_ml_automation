@@ -1,0 +1,12 @@
+# Access from outside to the UI
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-external-access
+  namespace: kubeflow-user-example-com
+spec:
+  selector:
+    matchLabels:
+      app: llm-ui
+  rules:
+  - {}

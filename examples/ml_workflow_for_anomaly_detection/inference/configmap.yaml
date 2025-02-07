@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ad-inference-config
+  namespace: kubeflow-user-example-com
+data:
+  MINIO_ENDPOINT: "http://minio-service.kubeflow.svc.cluster.local"
+  MODEL_NAME: "RandomForestClassifier_for_AD"
+  MODEL_VERSION: "v1.0.1"
+  REGISTRY_ENDPOINT: "http://model-registry-service.kubeflow.svc.cluster.local"
+  REGISTRY_PORT: "8080"
+  REGISTRY_AUTHOR: "Cassa"

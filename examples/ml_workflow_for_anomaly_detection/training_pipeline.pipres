@@ -1,0 +1,1796 @@
+{'created_at': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+ 'description': None,
+ 'display_name': 'anomaly-detection-training 2025-01-27 22-34-43',
+ 'error': None,
+ 'experiment_id': '95654629-f2e4-4c5a-9eca-d7fd8fa8b2c6',
+ 'finished_at': datetime.datetime(2025, 1, 27, 22, 46, 20, tzinfo=tzlocal()),
+ 'pipeline_spec': {'components': {'comp-data-processing': {'executorLabel': 'exec-data-processing',
+                                                           'inputDefinitions': {'parameters': {'train_input': {'parameterType': 'STRING'},
+                                                                                               'train_output': {'parameterType': 'STRING'}}},
+                                                           'outputDefinitions': {'artifacts': {'test_data': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                              'schemaVersion': '0.0.1'}},
+                                                                                               'train_data': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                               'schemaVersion': '0.0.1'}}}}},
+                                  'comp-data-resampling': {'executorLabel': 'exec-data-resampling',
+                                                           'inputDefinitions': {'artifacts': {'train_data': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                              'schemaVersion': '0.0.1'}}},
+                                                                                'parameters': {'oversampling_coeff': {'defaultValue': 1,
+                                                                                                                      'isOptional': True,
+                                                                                                                      'parameterType': 'NUMBER_INTEGER'},
+                                                                                               'undersampling_coeff': {'defaultValue': 1,
+                                                                                                                       'isOptional': True,
+                                                                                                                       'parameterType': 'NUMBER_INTEGER'}}},
+                                                           'outputDefinitions': {'artifacts': {'resampled_data': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                   'schemaVersion': '0.0.1'}}}}},
+                                  'comp-for-loop-1': {'dag': {'tasks': {'model-training-and-evaluation': {'cachingOptions': {'enableCache': True},
+                                                                                                          'componentRef': {'name': 'comp-model-training-and-evaluation'},
+                                                                                                          'inputs': {'artifacts': {'test_data': {'componentInputArtifact': 'pipelinechannel--data-processing-test_data'},
+                                                                                                                                   'train_data': {'componentInputArtifact': 'pipelinechannel--data-resampling-resampled_data'}},
+                                                                                                                     'parameters': {'model_name': {'componentInputParameter': 'pipelinechannel--models-loop-item'},
+                                                                                                                                    'version': {'componentInputParameter': 'pipelinechannel--models_version'}}},
+                                                                                                          'taskInfo': {'name': 'model-training-and-evaluation'}}}},
+                                                      'inputDefinitions': {'artifacts': {'pipelinechannel--data-processing-test_data': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                                         'schemaVersion': '0.0.1'}},
+                                                                                         'pipelinechannel--data-resampling-resampled_data': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                                              'schemaVersion': '0.0.1'}}},
+                                                                           'parameters': {'pipelinechannel--models': {'parameterType': 'LIST'},
+                                                                                          'pipelinechannel--models-loop-item': {'parameterType': 'STRING'},
+                                                                                          'pipelinechannel--models_version': {'parameterType': 'STRING'}}}},
+                                  'comp-model-training-and-evaluation': {'executorLabel': 'exec-model-training-and-evaluation',
+                                                                         'inputDefinitions': {'artifacts': {'test_data': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                           'schemaVersion': '0.0.1'}},
+                                                                                                            'train_data': {'artifactType': {'schemaTitle': 'system.Dataset',
+                                                                                                                                            'schemaVersion': '0.0.1'}}},
+                                                                                              'parameters': {'model_name': {'parameterType': 'STRING'},
+                                                                                                             'threshold': {'defaultValue': 0.5,
+                                                                                                                           'isOptional': True,
+                                                                                                                           'parameterType': 'NUMBER_DOUBLE'},
+                                                                                                             'version': {'parameterType': 'STRING'}}},
+                                                                         'outputDefinitions': {'artifacts': {'metrics': {'artifactType': {'schemaTitle': 'system.ClassificationMetrics',
+                                                                                                                                          'schemaVersion': '0.0.1'}},
+                                                                                                             'model': {'artifactType': {'schemaTitle': 'system.Model',
+                                                                                                                                        'schemaVersion': '0.0.1'}}}}}},
+                   'deploymentSpec': {'executors': {'exec-data-processing': {'container': {'args': ['--executor_input',
+                                                                                                    '{{$}}',
+                                                                                                    '--function_to_execute',
+                                                                                                    'data_processing'],
+                                                                                           'command': ['sh',
+                                                                                                       '-c',
+                                                                                                       '\n'
+                                                                                                       'if '
+                                                                                                       '! '
+                                                                                                       '[ '
+                                                                                                       '-x '
+                                                                                                       '"$(command '
+                                                                                                       '-v '
+                                                                                                       'pip)" '
+                                                                                                       ']; '
+                                                                                                       'then\n'
+                                                                                                       '    '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'ensurepip '
+                                                                                                       '|| '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'ensurepip '
+                                                                                                       '--user '
+                                                                                                       '|| '
+                                                                                                       'apt-get '
+                                                                                                       'install '
+                                                                                                       'python3-pip\n'
+                                                                                                       'fi\n'
+                                                                                                       '\n'
+                                                                                                       'PIP_DISABLE_PIP_VERSION_CHECK=1 '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'pip '
+                                                                                                       'install '
+                                                                                                       '--quiet '
+                                                                                                       '--no-warn-script-location '
+                                                                                                       "'kfp==2.11.0' "
+                                                                                                       "'--no-deps' "
+                                                                                                       "'typing-extensions>=3.7.4,<5; "
+                                                                                                       'python_version<"3.9"\'  '
+                                                                                                       '&&  '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'pip '
+                                                                                                       'install '
+                                                                                                       '--quiet '
+                                                                                                       '--no-warn-script-location '
+                                                                                                       "'scikit-learn==1.5.2' "
+                                                                                                       "'pandas==2.2.3' "
+                                                                                                       "'numpy==2.0.2' "
+                                                                                                       '&& '
+                                                                                                       '"$0" '
+                                                                                                       '"$@"\n',
+                                                                                                       'sh',
+                                                                                                       '-ec',
+                                                                                                       'program_path=$(mktemp '
+                                                                                                       '-d)\n'
+                                                                                                       '\n'
+                                                                                                       'printf '
+                                                                                                       '"%s" '
+                                                                                                       '"$0" '
+                                                                                                       '> '
+                                                                                                       '"$program_path/ephemeral_component.py"\n'
+                                                                                                       '_KFP_RUNTIME=true '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'kfp.dsl.executor_main                         '
+                                                                                                       '--component_module_path                         '
+                                                                                                       '"$program_path/ephemeral_component.py"                         '
+                                                                                                       '"$@"\n',
+                                                                                                       '\n'
+                                                                                                       'import '
+                                                                                                       'kfp\n'
+                                                                                                       'from '
+                                                                                                       'kfp '
+                                                                                                       'import '
+                                                                                                       'dsl\n'
+                                                                                                       'from '
+                                                                                                       'kfp.dsl '
+                                                                                                       'import '
+                                                                                                       '*\n'
+                                                                                                       'from '
+                                                                                                       'typing '
+                                                                                                       'import '
+                                                                                                       '*\n'
+                                                                                                       '\n'
+                                                                                                       'def '
+                                                                                                       'data_processing(\n'
+                                                                                                       '    '
+                                                                                                       'train_input: '
+                                                                                                       'str,\n'
+                                                                                                       '    '
+                                                                                                       'train_output: '
+                                                                                                       'str, \n'
+                                                                                                       '    '
+                                                                                                       'train_data: '
+                                                                                                       'Output[Dataset],\n'
+                                                                                                       '    '
+                                                                                                       'test_data: '
+                                                                                                       'Output[Dataset]\n'
+                                                                                                       '):\n'
+                                                                                                       '    '
+                                                                                                       'import '
+                                                                                                       'pandas '
+                                                                                                       'as '
+                                                                                                       'pd\n'
+                                                                                                       '    '
+                                                                                                       'from '
+                                                                                                       'sklearn.model_selection '
+                                                                                                       'import '
+                                                                                                       'train_test_split\n'
+                                                                                                       '    '
+                                                                                                       'from '
+                                                                                                       'sklearn.preprocessing '
+                                                                                                       'import '
+                                                                                                       'MinMaxScaler\n'
+                                                                                                       '\n'
+                                                                                                       '    '
+                                                                                                       '# '
+                                                                                                       'Load '
+                                                                                                       'the '
+                                                                                                       'data\n'
+                                                                                                       '    '
+                                                                                                       'training_inputs '
+                                                                                                       '= '
+                                                                                                       'pd.read_csv(train_input)\n'
+                                                                                                       '    '
+                                                                                                       'training_outputs '
+                                                                                                       '= '
+                                                                                                       'pd.read_csv(train_output)\n'
+                                                                                                       '    '
+                                                                                                       'training_data '
+                                                                                                       '= '
+                                                                                                       'pd.merge(training_outputs, '
+                                                                                                       'training_inputs, '
+                                                                                                       "on='PROC_TRACEINFO')\n"
+                                                                                                       '\n'
+                                                                                                       '    '
+                                                                                                       'def '
+                                                                                                       'processing():\n'
+                                                                                                       '        '
+                                                                                                       'df_train, '
+                                                                                                       'df_test '
+                                                                                                       '= '
+                                                                                                       'train_test_split(training_data, '
+                                                                                                       'test_size=0.2, '
+                                                                                                       'random_state=1)\n'
+                                                                                                       '\n'
+                                                                                                       '        '
+                                                                                                       'X_train '
+                                                                                                       '= '
+                                                                                                       "df_train.drop(columns=['PROC_TRACEINFO', "
+                                                                                                       "'Binar "
+                                                                                                       "OP130_Resultat_Global_v'])\n"
+                                                                                                       '        '
+                                                                                                       'X_test '
+                                                                                                       '= '
+                                                                                                       "df_test.drop(columns=['PROC_TRACEINFO', "
+                                                                                                       "'Binar "
+                                                                                                       "OP130_Resultat_Global_v'])\n"
+                                                                                                       '\n'
+                                                                                                       '        '
+                                                                                                       '# '
+                                                                                                       'Change '
+                                                                                                       'the '
+                                                                                                       'column '
+                                                                                                       'OP100_Capuchon_insertion_mesure '
+                                                                                                       'to '
+                                                                                                       'a '
+                                                                                                       'binary '
+                                                                                                       'column\n'
+                                                                                                       '        '
+                                                                                                       "X_train['OP100_Capuchon_insertion_mesure'] "
+                                                                                                       '= '
+                                                                                                       "X_train['OP100_Capuchon_insertion_mesure'].isnull()\n"
+                                                                                                       '        '
+                                                                                                       "X_test['OP100_Capuchon_insertion_mesure'] "
+                                                                                                       '= '
+                                                                                                       "X_test['OP100_Capuchon_insertion_mesure'].isnull()\n"
+                                                                                                       '\n'
+                                                                                                       '        '
+                                                                                                       '# '
+                                                                                                       'Scale '
+                                                                                                       'the '
+                                                                                                       'data\n'
+                                                                                                       '        '
+                                                                                                       'scaler '
+                                                                                                       '= '
+                                                                                                       'MinMaxScaler()\n'
+                                                                                                       '        '
+                                                                                                       'scaler.fit(X_train)\n'
+                                                                                                       '\n'
+                                                                                                       '        '
+                                                                                                       'X_train '
+                                                                                                       '= '
+                                                                                                       'scaler.transform(X_train)\n'
+                                                                                                       '        '
+                                                                                                       'X_test '
+                                                                                                       '= '
+                                                                                                       'scaler.transform(X_test) \n'
+                                                                                                       '\n'
+                                                                                                       '        '
+                                                                                                       'train_df '
+                                                                                                       '= '
+                                                                                                       'pd.DataFrame(X_train)\n'
+                                                                                                       '        '
+                                                                                                       'test_df '
+                                                                                                       '= '
+                                                                                                       'pd.DataFrame(X_test)\n'
+                                                                                                       '\n'
+                                                                                                       '        '
+                                                                                                       'y_train '
+                                                                                                       '= '
+                                                                                                       "list(df_train['Binar "
+                                                                                                       "OP130_Resultat_Global_v'])\n"
+                                                                                                       '        '
+                                                                                                       'y_test '
+                                                                                                       '= '
+                                                                                                       "list(df_test['Binar "
+                                                                                                       "OP130_Resultat_Global_v'])\n"
+                                                                                                       '\n'
+                                                                                                       '        '
+                                                                                                       "train_df['y'] "
+                                                                                                       '= '
+                                                                                                       'y_train\n'
+                                                                                                       '        '
+                                                                                                       "test_df['y'] "
+                                                                                                       '= '
+                                                                                                       'y_test\n'
+                                                                                                       '        '
+                                                                                                       'return '
+                                                                                                       'train_df, '
+                                                                                                       'test_df \n'
+                                                                                                       '\n'
+                                                                                                       '    '
+                                                                                                       'train_df, '
+                                                                                                       'test_df '
+                                                                                                       '= '
+                                                                                                       'processing()    \n'
+                                                                                                       '    '
+                                                                                                       'with '
+                                                                                                       'open(train_data.path, '
+                                                                                                       "'w') "
+                                                                                                       'as '
+                                                                                                       'f:\n'
+                                                                                                       '        '
+                                                                                                       'train_df.to_csv(f, '
+                                                                                                       'index=False)\n'
+                                                                                                       '    '
+                                                                                                       'with '
+                                                                                                       'open(test_data.path, '
+                                                                                                       "'w') "
+                                                                                                       'as '
+                                                                                                       'f:\n'
+                                                                                                       '        '
+                                                                                                       'test_df.to_csv(f, '
+                                                                                                       'index=False)\n'
+                                                                                                       '\n'],
+                                                                                           'image': 'python:3.9'}},
+                                                    'exec-data-resampling': {'container': {'args': ['--executor_input',
+                                                                                                    '{{$}}',
+                                                                                                    '--function_to_execute',
+                                                                                                    'data_resampling'],
+                                                                                           'command': ['sh',
+                                                                                                       '-c',
+                                                                                                       '\n'
+                                                                                                       'if '
+                                                                                                       '! '
+                                                                                                       '[ '
+                                                                                                       '-x '
+                                                                                                       '"$(command '
+                                                                                                       '-v '
+                                                                                                       'pip)" '
+                                                                                                       ']; '
+                                                                                                       'then\n'
+                                                                                                       '    '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'ensurepip '
+                                                                                                       '|| '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'ensurepip '
+                                                                                                       '--user '
+                                                                                                       '|| '
+                                                                                                       'apt-get '
+                                                                                                       'install '
+                                                                                                       'python3-pip\n'
+                                                                                                       'fi\n'
+                                                                                                       '\n'
+                                                                                                       'PIP_DISABLE_PIP_VERSION_CHECK=1 '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'pip '
+                                                                                                       'install '
+                                                                                                       '--quiet '
+                                                                                                       '--no-warn-script-location '
+                                                                                                       "'kfp==2.11.0' "
+                                                                                                       "'--no-deps' "
+                                                                                                       "'typing-extensions>=3.7.4,<5; "
+                                                                                                       'python_version<"3.9"\'  '
+                                                                                                       '&&  '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'pip '
+                                                                                                       'install '
+                                                                                                       '--quiet '
+                                                                                                       '--no-warn-script-location '
+                                                                                                       "'scikit-learn==1.5.2' "
+                                                                                                       "'pandas==2.2.3' "
+                                                                                                       "'numpy==2.0.2' "
+                                                                                                       "'imblearn==0.0' "
+                                                                                                       '&& '
+                                                                                                       '"$0" '
+                                                                                                       '"$@"\n',
+                                                                                                       'sh',
+                                                                                                       '-ec',
+                                                                                                       'program_path=$(mktemp '
+                                                                                                       '-d)\n'
+                                                                                                       '\n'
+                                                                                                       'printf '
+                                                                                                       '"%s" '
+                                                                                                       '"$0" '
+                                                                                                       '> '
+                                                                                                       '"$program_path/ephemeral_component.py"\n'
+                                                                                                       '_KFP_RUNTIME=true '
+                                                                                                       'python3 '
+                                                                                                       '-m '
+                                                                                                       'kfp.dsl.executor_main                         '
+                                                                                                       '--component_module_path                         '
+                                                                                                       '"$program_path/ephemeral_component.py"                         '
+                                                                                                       '"$@"\n',
+                                                                                                       '\n'
+                                                                                                       'import '
+                                                                                                       'kfp\n'
+                                                                                                       'from '
+                                                                                                       'kfp '
+                                                                                                       'import '
+                                                                                                       'dsl\n'
+                                                                                                       'from '
+                                                                                                       'kfp.dsl '
+                                                                                                       'import '
+                                                                                                       '*\n'
+                                                                                                       'from '
+                                                                                                       'typing '
+                                                                                                       'import '
+                                                                                                       '*\n'
+                                                                                                       '\n'
+                                                                                                       'def '
+                                                                                                       'data_resampling(\n'
+                                                                                                       '    '
+                                                                                                       'train_data: '
+                                                                                                       'Input[Dataset],\n'
+                                                                                                       '    '
+                                                                                                       'resampled_data: '
+                                                                                                       'Output[Dataset],\n'
+                                                                                                       '    '
+                                                                                                       'oversampling_coeff: '
+                                                                                                       'int '
+                                                                                                       '= '
+                                                                                                       '1,\n'
+                                                                                                       '    '
+                                                                                                       'undersampling_coeff: '
+                                                                                                       'int '
+                                                                                                       '= '
+                                                                                                       '1,\n'
+                                                                                                       '):\n'
+                                                                                                       '  '
+                                                                                                       '"""\n'
+                                                                                                       '  '
+                                                                                                       'Resample '
+                                                                                                       'the '
+                                                                                                       'dataset '
+                                                                                                       'to '
+                                                                                                       'balance '
+                                                                                                       'the '
+                                                                                                       'classes.\n'
+                                                                                                       '\n'
+                                                                                                       '  '
+                                                                                                       'Parameters:\n'
+                                                                                                       '  '
+                                                                                                       '- '
+                                                                                                       'train_data: '
+                                                                                                       'Training '
+                                                                                                       'dataset '
+                                                                                                       'artifact\n'
+                                                                                                       '  '
+                                                                                                       '- '
+                                                                                                       'oversampling_coeff: '
+                                                                                                       'Rate '
+                                                                                                       'of '
+                                                                                                       'minority '
+                                                                                                       'class '
+                                                                                                       'relative '
+                                                                                                       'to '
+                                                                                                       'majority '
+                                                                                                       'class '
+                                                                                                       'in '
+                                                                                                       'oversampling '
+                                                                                                       'strategy\n'
+                                                                                                       '  '
+                                                                                                       '- '
+                                                                                                       'undersampling_coeff: '
+                                                                                                       'Rate '
+                                                                                                       'of '
+                                                                                                       'minority '
+                                                                                                       'class '
+                                                                                                       'relative '
+                                                                                                       'to '
+                                                                                                       'majority '
+                                                                                                       'class '
+                                                                                                       'in '
+                                                                                                       'undersampling '
+                                                                                                       'strategy\n'
+                                                                                                       '\n'
+                                                                                                       '  '
+                                                                                                       'Returns:\n'
+                                                                                                       '  '
+                                                                                                       '- '
+                                                                                                       'resampled_data: '
+                                                                                                       'Resampled '
+                                                                                                       'dataset '
+                                                                                                       'artifact\n'
+                                                                                                       '  '
+                                                                                                       '"""\n'
+                                                                                                       '  '
+                                                                                                       'from '
+                                                                                                       'imblearn.over_sampling '
+                                                                                                       'import '
+                                                                                                       'SMOTE\n'
+                                                                                                       '  '
+                                                                                                       'from '
+                                                                                                       'imblearn.under_sampling '
+                                                                                                       'import '
+                                                                                                       'RandomUnderSampler\n'
+                                                                                                       '  '
+                                                                                                       'from '
+                                                                                                       'imblearn.pipeline '
+                                                                                                       'import '
+                                                                                                       'Pipeline\n'
+                                                                                                       '  '
+                                                                                                       'import '
+                                                                                                       'numpy '
+                                                                                                       'as '
+                                                                                                       'np\n'
+                                                                                                       '  '
+                                                                                                       'import '
+                                                                                                       'pandas '
+                                                                                                       'as '
+                                                                                                       'pd\n'
+                                                                                                       '\n'
+                                                                                                       '  '
+                                                                                                       'oversample '
+                                                                                                       '= '
+                                                                                                       'SMOTE(sampling_strategy=oversampling_coeff, '
+                                                                                                       'random_state=42)  '
+                                                                                                       '# '
+                                                                                                       'Oversample '
+                                                                                                       'minority '
+                                                                                                       'to '
+                                                                                                       '5% '
+                                                                                                       'of '
+                                                                                                       'majority\n'
+                                                                                                       '  '
+                                                                                                       'undersample '
+                                                                                                       '= '
+                                                                                                       'RandomUnderSampler(sampling_strategy=undersampling_coeff, '
+                                                                                                       'random_state=42)  '
+                                                                                                       '# '
+                                                                                                       'Undersample '
+                                                                                                       'majority '
+                                                                                                       'to '
+                                                                                                       '5x '
+                                                                                                       'minority\n'
+                                                                                                       '\n'
+                                                                                                       '  '
+                                                                                                       'resample_pipeline '
+                                                                                                       '= '
+                                                                                                       'Pipeline([\n'
+                                                                                                       '      '
+                                                                                                       "('smote', "
+                                                                                                       'oversample),\n'
+                                                                                                       '      '
+                                                                                                       "('undersample', "
+                                                                                                       'undersample)\n'
+                                                                                                       '  '
+                                                                                                       '])\n'
+                                                                                                       '\n'
+                                                                                                       '  '
+                                                                                                       'df_train '
+                                                                                                       '= '
+                                                                                                       'pd.read_csv(train_data.path)\n'
+                                                                                                       '\n'
+                                                                                                       '  '
+                                                                                                       'X_train '
+                                                                                                       '= '
+                                                                                                       'df_train.drop(columns=["y"])\n'
+                                                                                                       '  '
+                                                                                                       'y_train '
+                                                                                                       '= '
+                                                                                                       'df_train["y"]\n'
+                                                                                                       '\n'
+                                                                                                       '  '
+                                                                                                       'X_resampled, '
+                                                                                                       'y_resampled '
+                                                                                                       '= '
+                                                                                                       'resample_pipeline.fit_resample(X_train, '
+                                                                                                       'y_train)\n'
+                                                                                                       '\n'
+                                                                                                       '  '
+                                                                                                       'df_resampled '
+                                                                                                       '= '
+                                                                                                       'pd.concat([X_resampled, '
+                                                                                                       'y_resampled], '
+                                                                                                       'axis=1)\n'
+                                                                                                       '\n'
+                                                                                                       '  '
+                                                                                                       'with '
+                                                                                                       'open(resampled_data.path, '
+                                                                                                       "'w') "
+                                                                                                       'as '
+                                                                                                       'f:\n'
+                                                                                                       '    '
+                                                                                                       'df_resampled.to_csv(f, '
+                                                                                                       'index=False)\n'
+                                                                                                       '\n'],
+                                                                                           'image': 'python:3.9'}},
+                                                    'exec-model-training-and-evaluation': {'container': {'args': ['--executor_input',
+                                                                                                                  '{{$}}',
+                                                                                                                  '--function_to_execute',
+                                                                                                                  'model_training_and_evaluation'],
+                                                                                                         'command': ['sh',
+                                                                                                                     '-c',
+                                                                                                                     '\n'
+                                                                                                                     'if '
+                                                                                                                     '! '
+                                                                                                                     '[ '
+                                                                                                                     '-x '
+                                                                                                                     '"$(command '
+                                                                                                                     '-v '
+                                                                                                                     'pip)" '
+                                                                                                                     ']; '
+                                                                                                                     'then\n'
+                                                                                                                     '    '
+                                                                                                                     'python3 '
+                                                                                                                     '-m '
+                                                                                                                     'ensurepip '
+                                                                                                                     '|| '
+                                                                                                                     'python3 '
+                                                                                                                     '-m '
+                                                                                                                     'ensurepip '
+                                                                                                                     '--user '
+                                                                                                                     '|| '
+                                                                                                                     'apt-get '
+                                                                                                                     'install '
+                                                                                                                     'python3-pip\n'
+                                                                                                                     'fi\n'
+                                                                                                                     '\n'
+                                                                                                                     'PIP_DISABLE_PIP_VERSION_CHECK=1 '
+                                                                                                                     'python3 '
+                                                                                                                     '-m '
+                                                                                                                     'pip '
+                                                                                                                     'install '
+                                                                                                                     '--quiet '
+                                                                                                                     '--no-warn-script-location '
+                                                                                                                     "'kfp==2.11.0' "
+                                                                                                                     "'--no-deps' "
+                                                                                                                     "'typing-extensions>=3.7.4,<5; "
+                                                                                                                     'python_version<"3.9"\'  '
+                                                                                                                     '&&  '
+                                                                                                                     'python3 '
+                                                                                                                     '-m '
+                                                                                                                     'pip '
+                                                                                                                     'install '
+                                                                                                                     '--quiet '
+                                                                                                                     '--no-warn-script-location '
+                                                                                                                     "'scikit-learn==1.5.2' "
+                                                                                                                     "'pandas==2.2.3' "
+                                                                                                                     "'numpy==2.0.2' "
+                                                                                                                     "'xgboost==2.1.3' "
+                                                                                                                     "'model-registry==0.2.10' "
+                                                                                                                     '&& '
+                                                                                                                     '"$0" '
+                                                                                                                     '"$@"\n',
+                                                                                                                     'sh',
+                                                                                                                     '-ec',
+                                                                                                                     'program_path=$(mktemp '
+                                                                                                                     '-d)\n'
+                                                                                                                     '\n'
+                                                                                                                     'printf '
+                                                                                                                     '"%s" '
+                                                                                                                     '"$0" '
+                                                                                                                     '> '
+                                                                                                                     '"$program_path/ephemeral_component.py"\n'
+                                                                                                                     '_KFP_RUNTIME=true '
+                                                                                                                     'python3 '
+                                                                                                                     '-m '
+                                                                                                                     'kfp.dsl.executor_main                         '
+                                                                                                                     '--component_module_path                         '
+                                                                                                                     '"$program_path/ephemeral_component.py"                         '
+                                                                                                                     '"$@"\n',
+                                                                                                                     '\n'
+                                                                                                                     'import '
+                                                                                                                     'kfp\n'
+                                                                                                                     'from '
+                                                                                                                     'kfp '
+                                                                                                                     'import '
+                                                                                                                     'dsl\n'
+                                                                                                                     'from '
+                                                                                                                     'kfp.dsl '
+                                                                                                                     'import '
+                                                                                                                     '*\n'
+                                                                                                                     'from '
+                                                                                                                     'typing '
+                                                                                                                     'import '
+                                                                                                                     '*\n'
+                                                                                                                     '\n'
+                                                                                                                     'def '
+                                                                                                                     'model_training_and_evaluation(\n'
+                                                                                                                     '    '
+                                                                                                                     'model_name: '
+                                                                                                                     'str,\n'
+                                                                                                                     '    '
+                                                                                                                     'train_data: '
+                                                                                                                     'Input[Dataset],\n'
+                                                                                                                     '    '
+                                                                                                                     'test_data: '
+                                                                                                                     'Input[Dataset],\n'
+                                                                                                                     '    '
+                                                                                                                     'model: '
+                                                                                                                     'Output[Model],\n'
+                                                                                                                     '    '
+                                                                                                                     'metrics: '
+                                                                                                                     'Output[ClassificationMetrics],\n'
+                                                                                                                     '    '
+                                                                                                                     'version: '
+                                                                                                                     'str,\n'
+                                                                                                                     '    '
+                                                                                                                     'threshold: '
+                                                                                                                     'float '
+                                                                                                                     '= '
+                                                                                                                     '0.5\n'
+                                                                                                                     '):\n'
+                                                                                                                     '    '
+                                                                                                                     'import '
+                                                                                                                     'pickle\n'
+                                                                                                                     '    '
+                                                                                                                     'import '
+                                                                                                                     'pandas '
+                                                                                                                     'as '
+                                                                                                                     'pd\n'
+                                                                                                                     '    '
+                                                                                                                     'import '
+                                                                                                                     'numpy '
+                                                                                                                     'as '
+                                                                                                                     'np\n'
+                                                                                                                     '    '
+                                                                                                                     'from '
+                                                                                                                     'sklearn.metrics '
+                                                                                                                     'import '
+                                                                                                                     'roc_curve, '
+                                                                                                                     'auc, '
+                                                                                                                     'roc_auc_score, '
+                                                                                                                     'classification_report, '
+                                                                                                                     'confusion_matrix\n'
+                                                                                                                     '    '
+                                                                                                                     'from '
+                                                                                                                     'sklearn.ensemble '
+                                                                                                                     'import '
+                                                                                                                     'RandomForestClassifier\n'
+                                                                                                                     '    '
+                                                                                                                     'from '
+                                                                                                                     'sklearn.linear_model '
+                                                                                                                     'import '
+                                                                                                                     'LogisticRegression\n'
+                                                                                                                     '    '
+                                                                                                                     'from '
+                                                                                                                     'xgboost '
+                                                                                                                     'import '
+                                                                                                                     'XGBClassifier\n'
+                                                                                                                     '    '
+                                                                                                                     'import '
+                                                                                                                     'os\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     '# '
+                                                                                                                     'Load '
+                                                                                                                     'the '
+                                                                                                                     'dataset\n'
+                                                                                                                     '    '
+                                                                                                                     'df '
+                                                                                                                     '= '
+                                                                                                                     'pd.read_csv(train_data.path)\n'
+                                                                                                                     '    '
+                                                                                                                     'y_train '
+                                                                                                                     '= '
+                                                                                                                     "df.pop('y')\n"
+                                                                                                                     '    '
+                                                                                                                     'X_train '
+                                                                                                                     '= '
+                                                                                                                     'df\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'if '
+                                                                                                                     'model_name.lower() '
+                                                                                                                     'in '
+                                                                                                                     '["randomforestclassifier", '
+                                                                                                                     '"randomforestclf", '
+                                                                                                                     '"rfclassifier", '
+                                                                                                                     '"rfclf"]:\n'
+                                                                                                                     '        '
+                                                                                                                     'print("Choosing '
+                                                                                                                     'RandomForest '
+                                                                                                                     'classifier")\n'
+                                                                                                                     '        '
+                                                                                                                     'clf '
+                                                                                                                     '= '
+                                                                                                                     'RandomForestClassifier(random_state=42)\n'
+                                                                                                                     '    '
+                                                                                                                     'elif '
+                                                                                                                     'model_name.lower() '
+                                                                                                                     'in '
+                                                                                                                     '["xgboostclassifier", '
+                                                                                                                     '"xgbclassifier", '
+                                                                                                                     '"xgboostclf", '
+                                                                                                                     '"xgbclf"]:\n'
+                                                                                                                     '        '
+                                                                                                                     'print("Choosing '
+                                                                                                                     'XGB '
+                                                                                                                     'classifier")\n'
+                                                                                                                     '        '
+                                                                                                                     'clf '
+                                                                                                                     '= '
+                                                                                                                     'XGBClassifier(random_state=42)\n'
+                                                                                                                     '    '
+                                                                                                                     'else:\n'
+                                                                                                                     '        '
+                                                                                                                     'print("Choosing '
+                                                                                                                     'Logistic '
+                                                                                                                     'Regression")\n'
+                                                                                                                     '        '
+                                                                                                                     'clf '
+                                                                                                                     '= '
+                                                                                                                     'LogisticRegression(random_state=42, '
+                                                                                                                     'max_iter=1000)\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'clf.fit(X_train, '
+                                                                                                                     'y_train)\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'folder_path '
+                                                                                                                     '= '
+                                                                                                                     'f"{model.path}/{model_name.lower()}/{version}"\n'
+                                                                                                                     '    '
+                                                                                                                     'os.makedirs(folder_path, '
+                                                                                                                     'exist_ok=True)\n'
+                                                                                                                     '    '
+                                                                                                                     'model_path '
+                                                                                                                     '= '
+                                                                                                                     'f"{model.path}/{model_name.lower()}/{version}/model.pickle"\n'
+                                                                                                                     '    '
+                                                                                                                     'model_uri= '
+                                                                                                                     'f"{model.uri}/{model_name.lower()}/{version}/model.pickle"\n'
+                                                                                                                     '    '
+                                                                                                                     'with '
+                                                                                                                     'open(model_path, '
+                                                                                                                     '"wb") '
+                                                                                                                     'as '
+                                                                                                                     'f:\n'
+                                                                                                                     '        '
+                                                                                                                     'pickle.dump(clf, '
+                                                                                                                     'f)\n'
+                                                                                                                     '    '
+                                                                                                                     'print(f"Model '
+                                                                                                                     'saved '
+                                                                                                                     'to '
+                                                                                                                     '{model_path}")\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'print("Loading '
+                                                                                                                     'test '
+                                                                                                                     'data...")\n'
+                                                                                                                     '    '
+                                                                                                                     'df_test '
+                                                                                                                     '= '
+                                                                                                                     'pd.read_csv(test_data.path)\n'
+                                                                                                                     '    '
+                                                                                                                     'y_test '
+                                                                                                                     '= '
+                                                                                                                     "df_test.pop('y')\n"
+                                                                                                                     '    '
+                                                                                                                     'X_test '
+                                                                                                                     '= '
+                                                                                                                     'df_test\n'
+                                                                                                                     '    '
+                                                                                                                     'print("Test '
+                                                                                                                     'Data '
+                                                                                                                     'loaded")\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'print("Running '
+                                                                                                                     'predictions...")\n'
+                                                                                                                     '    '
+                                                                                                                     'proba '
+                                                                                                                     '= '
+                                                                                                                     'clf.predict_proba(X_test)[:, '
+                                                                                                                     '1]  '
+                                                                                                                     '# '
+                                                                                                                     'Probabilities '
+                                                                                                                     'for '
+                                                                                                                     'the '
+                                                                                                                     'positive '
+                                                                                                                     'class\n'
+                                                                                                                     '    '
+                                                                                                                     'y_pred '
+                                                                                                                     '= '
+                                                                                                                     '(proba '
+                                                                                                                     '>= '
+                                                                                                                     'threshold).astype(int)\n'
+                                                                                                                     '    '
+                                                                                                                     'fpr, '
+                                                                                                                     'tpr, '
+                                                                                                                     'thresholds '
+                                                                                                                     '= '
+                                                                                                                     'roc_curve(y_test, '
+                                                                                                                     'proba)\n'
+                                                                                                                     '    '
+                                                                                                                     'roc_auc '
+                                                                                                                     '= '
+                                                                                                                     'auc(fpr, '
+                                                                                                                     'tpr)\n'
+                                                                                                                     '    '
+                                                                                                                     'cm_categories '
+                                                                                                                     '= '
+                                                                                                                     '["Good", '
+                                                                                                                     '"Defect"]\n'
+                                                                                                                     '    '
+                                                                                                                     'cm '
+                                                                                                                     '= '
+                                                                                                                     'confusion_matrix(y_test, '
+                                                                                                                     'y_pred)\n'
+                                                                                                                     '    '
+                                                                                                                     'print("Finished '
+                                                                                                                     'predictions!")\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'from '
+                                                                                                                     'model_registry '
+                                                                                                                     'import '
+                                                                                                                     'ModelRegistry\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'registry '
+                                                                                                                     '= '
+                                                                                                                     'ModelRegistry(\n'
+                                                                                                                     '        '
+                                                                                                                     'server_address="http://model-registry-service.kubeflow.svc.cluster.local",\n'
+                                                                                                                     '        '
+                                                                                                                     'port=8080,\n'
+                                                                                                                     '        '
+                                                                                                                     'author="Cassa",\n'
+                                                                                                                     '        '
+                                                                                                                     'is_secure=False\n'
+                                                                                                                     '    '
+                                                                                                                     ')\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'try:\n'
+                                                                                                                     '        '
+                                                                                                                     'rm '
+                                                                                                                     '= '
+                                                                                                                     'registry.register_model(\n'
+                                                                                                                     '            '
+                                                                                                                     'model_name+"_for_AD",\n'
+                                                                                                                     '            '
+                                                                                                                     'model_uri,\n'
+                                                                                                                     '            '
+                                                                                                                     'model_format_name="sklearn",\n'
+                                                                                                                     '            '
+                                                                                                                     'model_format_version="1",\n'
+                                                                                                                     '            '
+                                                                                                                     'version=version,\n'
+                                                                                                                     '            '
+                                                                                                                     'description=f"{model_name} '
+                                                                                                                     'for '
+                                                                                                                     'Anomaly '
+                                                                                                                     'Detection '
+                                                                                                                     'task",\n'
+                                                                                                                     '            '
+                                                                                                                     'metadata={\n'
+                                                                                                                     '                '
+                                                                                                                     '"roc_auc_score": '
+                                                                                                                     'float(roc_auc),\n'
+                                                                                                                     '            '
+                                                                                                                     '}\n'
+                                                                                                                     '        '
+                                                                                                                     ')\n'
+                                                                                                                     '    '
+                                                                                                                     'except '
+                                                                                                                     'Exception '
+                                                                                                                     'as '
+                                                                                                                     'e:\n'
+                                                                                                                     '        '
+                                                                                                                     'print(f"Error '
+                                                                                                                     'when '
+                                                                                                                     'registering '
+                                                                                                                     'the '
+                                                                                                                     'model: '
+                                                                                                                     '{e}")\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'print(f"Pushed '
+                                                                                                                     'model '
+                                                                                                                     'to '
+                                                                                                                     'registry '
+                                                                                                                     'with '
+                                                                                                                     'roc_auc '
+                                                                                                                     'score '
+                                                                                                                     'of '
+                                                                                                                     '{roc_auc}")\n'
+                                                                                                                     '\n'
+                                                                                                                     '    '
+                                                                                                                     'cleaned_thresholds '
+                                                                                                                     '= '
+                                                                                                                     '[float(thresh) '
+                                                                                                                     'if '
+                                                                                                                     'np.isfinite(thresh) '
+                                                                                                                     'else '
+                                                                                                                     '1.0 '
+                                                                                                                     'for '
+                                                                                                                     'thresh '
+                                                                                                                     'in '
+                                                                                                                     'thresholds]\n'
+                                                                                                                     '    '
+                                                                                                                     'print("Storing '
+                                                                                                                     'metrics")\n'
+                                                                                                                     '    '
+                                                                                                                     'metrics.log_roc_curve(fpr.tolist(), '
+                                                                                                                     'tpr.tolist(), '
+                                                                                                                     'cleaned_thresholds)\n'
+                                                                                                                     '    '
+                                                                                                                     'metrics.log_confusion_matrix(cm_categories, '
+                                                                                                                     'cm.tolist())\n'
+                                                                                                                     '    '
+                                                                                                                     'print("Metrics '
+                                                                                                                     'stored!")\n'
+                                                                                                                     '\n'],
+                                                                                                         'image': 'python:3.9'}}}},
+                   'pipelineInfo': {'name': 'anomaly-detection-training'},
+                   'root': {'dag': {'tasks': {'data-processing': {'cachingOptions': {},
+                                                                  'componentRef': {'name': 'comp-data-processing'},
+                                                                  'inputs': {'parameters': {'train_input': {'componentInputParameter': 'train_input'},
+                                                                                            'train_output': {'componentInputParameter': 'train_output'}}},
+                                                                  'taskInfo': {'name': 'data-processing'}},
+                                              'data-resampling': {'cachingOptions': {},
+                                                                  'componentRef': {'name': 'comp-data-resampling'},
+                                                                  'dependentTasks': ['data-processing'],
+                                                                  'inputs': {'artifacts': {'train_data': {'taskOutputArtifact': {'outputArtifactKey': 'train_data',
+                                                                                                                                 'producerTask': 'data-processing'}}}},
+                                                                  'taskInfo': {'name': 'data-resampling'}},
+                                              'for-loop-1': {'cachingOptions': {},
+                                                             'componentRef': {'name': 'comp-for-loop-1'},
+                                                             'dependentTasks': ['data-processing',
+                                                                                'data-resampling'],
+                                                             'inputs': {'artifacts': {'pipelinechannel--data-processing-test_data': {'taskOutputArtifact': {'outputArtifactKey': 'test_data',
+                                                                                                                                                            'producerTask': 'data-processing'}},
+                                                                                      'pipelinechannel--data-resampling-resampled_data': {'taskOutputArtifact': {'outputArtifactKey': 'resampled_data',
+                                                                                                                                                                 'producerTask': 'data-resampling'}}},
+                                                                        'parameters': {'pipelinechannel--models': {'componentInputParameter': 'models'},
+                                                                                       'pipelinechannel--models_version': {'componentInputParameter': 'models_version'}}},
+                                                             'parameterIterator': {'itemInput': 'pipelinechannel--models-loop-item',
+                                                                                   'items': {'inputParameter': 'pipelinechannel--models'}},
+                                                             'taskInfo': {'name': 'Model '
+                                                                                  'training '
+                                                                                  'loop'}}}},
+                            'inputDefinitions': {'parameters': {'models': {'parameterType': 'LIST'},
+                                                                'models_version': {'parameterType': 'STRING'},
+                                                                'train_input': {'parameterType': 'STRING'},
+                                                                'train_output': {'parameterType': 'STRING'}}}},
+                   'schemaVersion': '2.1.0',
+                   'sdkVersion': 'kfp-2.11.0'},
+ 'pipeline_version_id': None,
+ 'pipeline_version_reference': None,
+ 'recurring_run_id': None,
+ 'run_details': {'pipeline_context_id': None,
+                 'pipeline_run_context_id': None,
+                 'task_details': [{'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-4074924978',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'model-training-and-evaluation-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 42, 51, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 42, 18, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 19, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 29, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 3, tzinfo=tzlocal())}],
+                                   'task_id': '08f3cead-f83e-4c18-a35d-9ca4c5b9751b'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-863779529',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'model-training-and-evaluation',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 45, 56, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 43, 48, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 49, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 45, 57, tzinfo=tzlocal())}],
+                                   'task_id': '12a3ea51-98fb-40f6-af8d-955b3260b4b3'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-3306797996',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'data-processing-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 36, 28, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 35, 53, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 35, 54, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 36, 4, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 36, 39, tzinfo=tzlocal())}],
+                                   'task_id': '19b89701-c0e5-4f62-830a-f62d62ce7fd4'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-567673134',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'root-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 35, 44, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 34, 44, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 34, 54, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 35, 54, tzinfo=tzlocal())}],
+                                   'task_id': '1b66627c-a1b1-46d5-9456-857533eca548'},
+                                  {'child_tasks': None,
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'executor',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 46, 10, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 43, 38, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 39, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 49, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 46, 21, tzinfo=tzlocal())}],
+                                   'task_id': '1c33550a-18ed-4584-922d-9899bb508e86'},
+                                  {'child_tasks': None,
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'executor',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 45, 5, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 43, 1, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 3, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 13, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 45, 16, tzinfo=tzlocal())}],
+                                   'task_id': '2daad59e-03b3-4ee8-acee-63a9beffaef5'},
+                                  {'child_tasks': None,
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'executor',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 45, 46, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 43, 48, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 49, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 59, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 45, 57, tzinfo=tzlocal())}],
+                                   'task_id': '3763fb83-cc05-40d9-b37b-dcfe27183a90'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-387112595',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'executor',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 40, 21, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 39, 14, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 39, 16, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 39, 26, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 40, 32, tzinfo=tzlocal())}],
+                                   'task_id': '39e2546e-a85f-4993-8c94-1e1fa2d61059'},
+                                  {'child_tasks': None,
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 43, 52, tzinfo=tzlocal()),
+                                   'display_name': None,
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 45, 44, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': '78',
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 43, 52, tzinfo=tzlocal()),
+                                   'state': None,
+                                   'state_history': None,
+                                   'task_id': '40c04e44-e471-4af2-9a2b-34a3997b49ff'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-196030768',
+                                                    'task_id': None},
+                                                   {'pod_name': 'anomaly-detection-training-vk4mp-387112595',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'executor',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 38, 8, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 36, 38, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 36, 39, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 36, 49, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 38, 19, tzinfo=tzlocal())}],
+                                   'task_id': '4d11bbe6-a4b8-4c63-8c06-a05e9e3d8ce6'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-3780640926',
+                                                    'task_id': None},
+                                                   {'pod_name': 'anomaly-detection-training-vk4mp-321631610',
+                                                    'task_id': None},
+                                                   {'pod_name': 'anomaly-detection-training-vk4mp-1842271566',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'for-loop-1-iterations',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 46, 20, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 41, 47, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 48, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 46, 21, tzinfo=tzlocal())}],
+                                   'task_id': '54c50cb7-2f91-4f44-96ed-3bcde657ee0f'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-1089739560',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'for-loop-1-iterations(0:0)',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 45, 56, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 41, 47, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 48, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 45, 57, tzinfo=tzlocal())}],
+                                   'task_id': '5da5686e-c2a4-467f-88a6-b8db9a7191e1'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-2391809495',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'iteration',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 45, 15, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 42, 18, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 19, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 45, 16, tzinfo=tzlocal())}],
+                                   'task_id': '63399c78-0e8c-4620-9896-c9385b444b2c'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-1263827023',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'data-processing',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 38, 18, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 36, 38, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 36, 39, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 38, 19, tzinfo=tzlocal())}],
+                                   'task_id': '747c53b3-ee93-48b4-afca-c08b3ff69810'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-1232639532',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'for-loop-1-iterations(1:1)',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 46, 20, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 41, 47, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 48, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 46, 21, tzinfo=tzlocal())}],
+                                   'task_id': '76ba104c-2112-4705-9008-bcf658697f00'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-2979949366',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'data-resampling',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 40, 31, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 39, 14, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 39, 16, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 40, 32, tzinfo=tzlocal())}],
+                                   'task_id': '776713ee-f756-410f-b6d9-feb753dd0003'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-2521189707',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'iteration-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 42, 15, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 41, 47, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 48, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 58, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 19, tzinfo=tzlocal())}],
+                                   'task_id': '93b8dc1d-e33b-4bc9-a3b5-d1155e242e43'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-3249193755',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'anomaly-detection-training-vk4mp',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 46, 20, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 34, 44, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 46, 21, tzinfo=tzlocal())}],
+                                   'task_id': '9796f5d8-e36a-4791-9640-dc73ef36b092'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-47371128',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'for-loop-1-iterations(2:2)',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 45, 15, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 41, 47, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 48, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 45, 16, tzinfo=tzlocal())}],
+                                   'task_id': 'a870df6f-82fd-47b4-b144-dcea4353dbbc'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-3026871102',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'model-training-and-evaluation-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 43, 28, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 42, 18, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 19, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 29, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 39, tzinfo=tzlocal())}],
+                                   'task_id': 'ab55f99e-a39f-4ce1-a2ff-8ce32c56c758'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-1147234219',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'iteration',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 46, 20, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 42, 18, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 19, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 46, 21, tzinfo=tzlocal())}],
+                                   'task_id': 'be3e0a54-b249-461d-be7b-2693934ded91'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-2853212705',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'for-loop-1-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 41, 37, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 40, 31, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 40, 32, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 40, 42, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 48, tzinfo=tzlocal())}],
+                                   'task_id': 'c8d086de-5b2b-4b7d-837e-6cb8007a4e0a'},
+                                  {'child_tasks': None,
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 43, 4, tzinfo=tzlocal()),
+                                   'display_name': None,
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 44, 48, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': '76',
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 43, 4, tzinfo=tzlocal()),
+                                   'state': None,
+                                   'state_history': None,
+                                   'task_id': 'ceca99fc-69d4-46c0-9261-bfc0a26e6feb'},
+                                  {'child_tasks': None,
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 43, 42, tzinfo=tzlocal()),
+                                   'display_name': None,
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 46, 9, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': '77',
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 43, 42, tzinfo=tzlocal()),
+                                   'state': None,
+                                   'state_history': None,
+                                   'task_id': 'd1e3f353-cfca-4c40-97c7-175992944ce9'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-1260490519',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'data-resampling-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 39, 4, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 38, 18, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 38, 19, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 38, 29, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 39, 16, tzinfo=tzlocal())}],
+                                   'task_id': 'd97ddbc8-e009-44ae-b82b-f535b9bef38c'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-2405039713',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'root',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 46, 20, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 35, 53, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 35, 54, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 46, 21, tzinfo=tzlocal())}],
+                                   'task_id': 'df851650-2ef9-4462-92c0-07bd9f29c884'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-3462789823',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'iteration-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 42, 15, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 41, 47, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 48, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 58, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 19, tzinfo=tzlocal())}],
+                                   'task_id': 'e1f9f710-3213-4264-85c9-de982647d2e1'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-1467529423',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'iteration-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 42, 8, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 41, 47, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 48, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 41, 58, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 19, tzinfo=tzlocal())}],
+                                   'task_id': 'e7894d85-bce9-4072-a4a7-5afeb1859579'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-1605764057',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'model-training-and-evaluation',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 45, 15, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 43, 1, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 3, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 45, 16, tzinfo=tzlocal())}],
+                                   'task_id': 'ebf3e3f3-5f59-4f85-ae92-57973da19a2c'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-3236150759',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'iteration',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 45, 56, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 42, 18, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 19, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 45, 57, tzinfo=tzlocal())}],
+                                   'task_id': 'ed5eb627-9abf-4637-aa0b-13ae6b88282a'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-23030018',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'model-training-and-evaluation-driver',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 43, 41, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 42, 18, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'PENDING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 19, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 42, 29, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 49, tzinfo=tzlocal())}],
+                                   'task_id': 'efa1f3c9-c049-4406-919b-506a500309bd'},
+                                  {'child_tasks': [{'pod_name': 'anomaly-detection-training-vk4mp-985715421',
+                                                    'task_id': None}],
+                                   'create_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+                                   'display_name': 'model-training-and-evaluation',
+                                   'end_time': datetime.datetime(2025, 1, 27, 22, 46, 20, tzinfo=tzlocal()),
+                                   'error': None,
+                                   'execution_id': None,
+                                   'executor_detail': None,
+                                   'inputs': None,
+                                   'outputs': None,
+                                   'parent_task_id': None,
+                                   'pod_name': None,
+                                   'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+                                   'start_time': datetime.datetime(2025, 1, 27, 22, 43, 38, tzinfo=tzlocal()),
+                                   'state': 'SUCCEEDED',
+                                   'state_history': [{'error': None,
+                                                      'state': 'RUNNING',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 43, 39, tzinfo=tzlocal())},
+                                                     {'error': None,
+                                                      'state': 'SUCCEEDED',
+                                                      'update_time': datetime.datetime(2025, 1, 27, 22, 46, 21, tzinfo=tzlocal())}],
+                                   'task_id': 'f3bf03a8-271c-4591-9b4d-b483f3279252'}]},
+ 'run_id': 'd35ded4a-f400-4563-bf96-e4873c4ef330',
+ 'runtime_config': {'parameters': {'models': ['XGBClassifier',
+                                              'RandomForestClassifier',
+                                              'LogisticRegression'],
+                                   'models_version': 'v1.0.1',
+                                   'train_input': 'https://raw.githubusercontent.com/gara2000/kubeflow_datasets/refs/heads/main/anomaly_detection/traininginputs.csv',
+                                   'train_output': 'https://raw.githubusercontent.com/gara2000/kubeflow_datasets/refs/heads/main/anomaly_detection/trainingoutput.csv'},
+                    'pipeline_root': None},
+ 'scheduled_at': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal()),
+ 'service_account': 'default-editor',
+ 'state': 'SUCCEEDED',
+ 'state_history': [{'error': None,
+                    'state': 'PENDING',
+                    'update_time': datetime.datetime(2025, 1, 27, 22, 34, 43, tzinfo=tzlocal())},
+                   {'error': None,
+                    'state': 'RUNNING',
+                    'update_time': datetime.datetime(2025, 1, 27, 22, 34, 44, tzinfo=tzlocal())},
+                   {'error': None,
+                    'state': 'SUCCEEDED',
+                    'update_time': datetime.datetime(2025, 1, 27, 22, 46, 21, tzinfo=tzlocal())}],
+ 'storage_state': 'AVAILABLE'}

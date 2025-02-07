@@ -1,0 +1,60 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: ad-inference
+  namespace: kubeflow-user-example-com
+spec:
+  predictor:
+    containers:
+      - name: ad-inference-container
+        image: 2cassa2/ad_inference_endpoint:1.0.0
+        ports:
+          - containerPort: 5000
+        env:
+          - name: MINIO_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: ad-inference-config
+                key: MINIO_ENDPOINT
+          - name: MODEL_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: ad-inference-config
+                key: MODEL_NAME
+          - name: MODEL_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: ad-inference-config
+                key: MODEL_VERSION
+          - name: REGISTRY_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: ad-inference-config
+                key: REGISTRY_ENDPOINT
+          - name: REGISTRY_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: ad-inference-config
+                key: REGISTRY_PORT
+          - name: REGISTRY_AUTHOR
+            valueFrom:
+              configMapKeyRef:
+                name: ad-inference-config
+                key: REGISTRY_AUTHOR
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mlpipeline-minio-artifact
+                key: accesskey
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mlpipeline-minio-artifact
+                key: secretkey
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "1"
+            memory: "2Gi"

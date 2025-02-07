@@ -1,0 +1,6 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h2>Prediction Result</h2>
+    <p>{{ result }}</p>
+    <a href="{{ url_for('predict') }}">Make Another Prediction</a>
+{% endblock %}

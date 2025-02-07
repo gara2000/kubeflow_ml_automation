@@ -1,0 +1,14 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-frontend-to-inferenceservice
+  namespace: kubeflow-user-example-com
+spec:
+  selector:
+    matchLabels:
+      app: inferenceservice
+  action: ALLOW
+  rules:
+  - when:
+    - key: request.headers[X-Frontend-Access]
+      values: ["true"]  # Ensure frontend sends this header

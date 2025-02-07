@@ -1,6 +1,6 @@
-# LLMOps
+# End-to-End MLOps with Kubeflow
 ## Descrition
-To be completed
+This project explores Kubeflow as a platform for managing end-to-end machine learning workflows on Kubernetes, enabling data scientists to automate and streamline their daily tasks. It covers the full ML lifecycle, including pipeline orchestration with Kubeflow Pipelines, artifact storage with MinIO, model versioning with the Model Registry, and serving models using KServe. Additionally, it integrates monitoring with Prometheus and Grafana to track model performance and resource usage. The goal is to demonstrate how Kubeflow can simplify ML development, deployment, and scaling in a cloud-native environment.
 ## Prerequisits
 ### Install make
 ```bash
@@ -60,7 +60,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.
 sudo apt-get update
 sudo apt-get install helm
 ```
-### KFP prerequisites
+### Kubeflow prerequisites
 #### Create Python virtual environement
 ```bash
 python3 -m venv .kubeflow
@@ -70,12 +70,11 @@ source .kubeflow/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-## Kubeflow Installation
-### Kind cluster deployment
+#### Kind cluster deployment
 ```bash
 make cluster
 ```
-### Kubeflow platform installation
+#### Kubeflow platform installation
 ```bash
 make build-kubeflow
 ```
@@ -96,134 +95,116 @@ Now the platform is accessible on [localhost:8080](http://localhost:8080)
 You an access with the follwing credentials:
 - email: `user@example.com`
 - password: `12341234`
-
-## Fine-Tuning Pipeline
-### Pipeline description
-![Pipeline](assets/finetuning%20pipeline.png)  
-This Kubeflow pipeline is designed to orchestrate the end-to-end workflow for fine-tuning a machine learning model. The pipeline consists of the following key components:
-#### Data Fetching component
-- Purpose: Retrieves the required dataset from a specified source.
-- Output: The dataset is saved to the output_dataset artifact for downstream processing.
-#### Data Tokenization component
-- Purpose: Processes the fetched dataset by tokenizing it to prepare for model training.
-- Input: Dataset from output_dataset.
-- Output: Tokenized data stored in the updated output_dataset artifact.
-#### Model Finetuning component
-- Purpose: Fine-tunes the pre-trained model using the tokenized dataset.
-- Input: Tokenized dataset from output_dataset.
-- Output: The fine-tuned model is saved to the output_model_dir artifact.
-#### Model Upload component
-- Purpose: Uploads the fine-tuned model to a HuggingFace repository from which it can be retrieved for serving
-- Input: Fine-tuned model from output_model_dir.
-
-This pipeline ensures a streamlined approach to fine-tuning, enabling reproducibility and automation of tasks from data preprocessing to model deployment preparation.
-### Run the pipeline
-The pipeline output model will be stored in a HuggingFace repository hence we need to provide a HF access token.  
-Go to your HuggingFace profile and generate an access token, ensure that the token has a write permission.  
-Then save the token in an environment variable called `HF_TOKEN` and define your HF repository name in an environment variable called `HF_REPO` like following:
+### Implementing monitoring
+We use Prometheus and Grafana as a monitoring solution for our cluster.
+#### Prometheus
 ```bash
-export HF_TOKEN="<your-hf-access-token>"
-export HF_REPO="<your-hf-username>/<repo-name>"
+make prometheus
 ```
-Run the following command to create a Kubernetes secret that is going to be used by the model_upload component
+Optionally you can expose prometheus server using
 ```bash
-cd llm-pipelines && make create-secret
+make prometheus-expose
 ```
-Before running the pipeline make sure you are inside the python virtual environment and that the requirements are installed.  
-Run the pipeline (make sure you are in the root of the project directory)
+#### Grafana
+We use Grafana dashboards to visualize the cluster telemetries, start by deploying Garafana on the cluster
 ```bash
-python3 -m llm-pipelines.fine-tune-pipeline
+make grafana
 ```
-
-## LLM Inference
-This LLM inference endpoint, consists of two primary components: the LLM API and the frontend UI. The endpoint is designed to answer user questions based on a provided context by leveraging a language model (LLM) from Hugging Face, integrated with LangChain and LangSmith for enhanced functionality and telemetry.
-### Architecture Components
-#### LLM API
-Description:  
-- Serves a Hugging Face-based language model.  
-- Utilizes LangChain for chaining the LLM with:  
-  - A prompt to define the task.  
-  - An strOutputParser to structure the response.  
-- Answers questions based on a given context.  
-- Integrates with LangSmith for telemetry to monitor and analyze the model’s performance.  
-
-Features:
-- Contextual Question Answering: Generates responses based on a context and a question.  
-- Telemetry: Sends model performance metrics and logs to the LangSmith platform.  
-
-Deployment:  
-- Deployed using KServe's InferenceService.  
-
-Configuration:  
-- ConfigMap: Used to pass the model name to the inference service.  
-- Secrets:  
-  - Hugging Face access token.  
-  - LangSmith configuration variables and token.  
-
-Security:
-- Istio AuthorizationPolicy: Allow access from the UI to the LLM API.
-#### Frontend UI
-Description:  
-- Provides an intuitive interface for users to:  
-  - Input a context.  
-  - Submit questions.  
-  - View model-generated responses.  
-- Acts as the interaction layer for the inference endpoint.  
-
-Deployment:
-- Deployed in the same Kubernetes namespace as the API (kubeflow-user-example-com).  
-
-Configuration:
-- ConfigMap: Used to pass the model API URL to the UI.  
-
-Security:
-- Istio AuthorizationPolicy: Allow external interaction with the UI.
-### Workflow
-User Interaction:
-- The user accesses the frontend UI and inputs a context and a question.
-- The UI sends the input to the LLM API.  
-
-Inference Process:
-- The LLM API processes the input using:
-  - The provided context and question.  
-  - The configured prompt and strparser via LangChain.  
-- The LLM generates a response and returns it to the UI.  
-
-Telemetry:  
-- LangSmith collects telemetry data for:  
-  - Model performance.  
-  - User interaction metrics.  
-
-Response Display:  
-- The UI displays the response to the user.  
-
-### Run the Endpoint
-Before running the enpoint you need to have the following environement variables set
+Then expose the grafana service to access the platform
 ```bash
-export HF_TOKEN="<your-huggingface-token>"
-export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_ENDPOINT="<langchain-endpoint>"
-export LANGCHAIN_API_KEY="<your-langsmith-api-key>"
-export LANGCHAIN_PROJECT="<your-langsmith-project-name>"
+make grafana-expose
 ```
-To get these env vars, you need to log into your LangSmith account and create a new project.  
-Once these variables are set you can deploy the endpoints with the follwing commands:
+You will be required to authenticate to enter the platform for this the username is `admin`, and in order to get the password for the `admin` user, run the following command
 ```bash
-cd llm-endpoint
-make api-deploy
-make ui-deploy
+make grafana-admin-password
 ```
-Now you can check the address on which the UI is served using the following command
+### Deploying a model registry
+Some of the example pipelines we are using leverage the kubeflow model-registry, for versioning ML models.  
+For this we need to deploy the model-registry with the following command
 ```bash
-kubectl get svc llm-ui -n kubeflow-user-example-com -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+make model-registry
 ```
-Log into the UI
-![UI](assets/UI.png)
-Enter your question and the context, then click `Generate Response`
-![Response](assets/response.png)
-Now you can check your LangSmith project for model telemetry
-![Telemetry](assets/telemetry.png)
+Once the model-registry is deployed we can access it in two ways (such as all other kubernetes services), either within the cluster using the internal service DNS name `http://model-registry-service.kubeflow.svc.cluster.local:8080`.  
+Or to access from outside the cluster we use port-forwarding
+```bash
+make model-registry-expose
+```
+Then we can access it on `http://localhost:8081`
+### Minio
+The storage solution used by kubeflow is the Minio object storage, where it stores the different Kubeflow Pipelines (KFP) artifacts, as well as logs about the pipelines.  
+We can access the storage from within the cluster with the internal service DNS name `http://minio-service.kubeflow.svc.cluster.local:9000`, or through port forwarding using the following command
+```bash
+make minio-expose
+```
+To get the access credentials run
+```bash
+make minio-access-secrets
+```
+
+## Exploring Kubeflow
+To experiement with Kubeflow using the UI, access the created user platform on Kubeflow on [localhost:8080](http://localhost:8080) after port-forwarding the istio-ingressgateway service
+```bash
+make expose_kubeflow
+``` 
+Use the user email `user@example.com` and password `12341234` to access the platform.  
+### Kubeflow notebooks
+Kubeflow Notebooks provide an interactive development environment within a Kubernetes cluster, allowing users to create, manage, and run Jupyter notebooks for machine learning and data science tasks.  
+Go to Notebooks and create a new notebook.  
+
+![notebooks](/assets/notebooks.png)
+
+Once created you can start experimenting with the Notebooks instance.  
+
+![notebook](/assets/%20notebooks%202.png)
+
+**Note**: If you want to be able to create and run Kubeflow Pipelines from within the notebook, you should enable KFP access when creating the notebook.
+
+### Kubeflow Pipelines
+#### Description
+Kubeflow Pipelines (KFP) is the Kubeflow component for building, deploying, and managing end-to-end machine learning (ML) workflows on Kubernetes. It enables users to define reusable and scalable ML workflows as Directed Acyclic Graphs (DAGs), where each step (component) runs in a container.
+#### Examples
+In the `/examples` folder we present different use cases of how to work with kubeflow pipelines, check the following examples:
+
+[End-to-end ML workflow](/examples/end-to-end_ml_workflow/) 
+
+[LLM workflow](/examples/llm_workflow/)
+### Kubeflow storage solution: Minio
+
+Kubeflow adopts MinIO as a high-performance, distributed object storage solution for managing datasets and model artifacts. MinIO is compatible with Amazon S3 APIs, making it easy to integrate with other cloud-native applications. It serves as the default storage backend for Kubeflow, providing a scalable, fault-tolerant, and secure system for storing large volumes of machine learning data, such as training datasets, model checkpoints, and results.
+
+in the root of the project, run the following command to expose the Minio service
+```bash
+make minio-expose
+```
+To get the access credentials run
+```bash
+make minio-access-secrets
+```
+You can see the `mlpipeline` bucket which containes the different artifacts each associated with its specific pipeline and specific KFP component
+
+![minio](/assets/minio.png)
+
+### Kubeflow Model-regsitry for model versioning
+Kubeflow Model Registry is a centralized repository for managing machine learning models within the Kubeflow ecosystem. It enables versioning, tracking, and organizing models throughout their lifecycle, from training to deployment.  
+The model registry is the meeting point between Data Scientits who experiment with and train the models and AI engineers who deploy models into production.  
+To expose the model registry server run the following command
+```bash
+make expose_model-registry
+```
+The file [/examples/end-to-end_ml_workflow/explore_registry.py](/examples/end-to-end_ml_workflow/explore_registry.py) provides an example code of how to interact with the model registry.
+### Kubeflow model-serving solution: Kserve
+#### Description
+KServe is a Kubernetes-native model serving platform designed to deploy and manage machine learning models at scale. It provides serverless inference capabilities with features like auto-scaling, multi-framework support (TensorFlow, PyTorch, Scikit-learn, XGBoost, etc.), and built-in request logging and monitoring.
+#### Examples
+The following example goes in detail, on how to serve a machine learning model from a Kubernetes PVC. (you can find this at the end of the example after creating, versioning and storing the model using Kubeflow Pipelines)
+[End-to-end ML workflow](/examples/end-to-end_ml_workflow/) 
 
 ## Troubleshooting
 **Issue1**: The browser will automatically save the access token to the kubeflow platform, this might raise an issue when you redeploy the cluster as the token changes. To solve this you need to clear the cashed data, in particular the cookies cashed data: right click on the web app page > inspect > Application > look for the cookies and delete the saved data  
 **Issue2**: [Annotation is too long](https://github.com/kserve/kserve/issues/3487) 
+
+## References
+[Kubeflow](https://kubeflow.org/)  
+[Kserve](https://kserve.github.io/website/0.14/)
+[kfp-kubernetes API reference](https://kfp-kubernetes.readthedocs.io/en/kfp-kubernetes-1.4.0/#)
+[istio service mesh](https://istio.io/)

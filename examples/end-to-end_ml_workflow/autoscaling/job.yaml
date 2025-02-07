@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kserve-load-test
+  namespace: kubeflow-user-example-com
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: hey-client
+        image: 2cassa2/hey:1.0.0
+        command: ["hey"]
+        args: ["-z", "1m", "-c", "500", "-m", "POST", "-H", "Content-Type: application/json",
+              "-H", "X-Frontend-Access: true",
+              "-D", "/mnt/inference/iris-input.json",
+              "http://sklearn-inference.kubeflow-user-example-com.svc.cluster.local/v1/models/sklearn-inference:predict"]
+        volumeMounts:
+        - name: iris-input-volume
+          mountPath: /mnt/inference
+      volumes:
+      - name: iris-input-volume
+        configMap:
+          name: iris-input-config

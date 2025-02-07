@@ -1,0 +1,21 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: sklearn-inference
+  namespace: kubeflow-user-example-com 
+  labels:
+    app: inferenceservice
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: sklearn
+      storageUri: "pvc://model-pvc/models/KNN_9/v1/model"
+
+      # resources:
+      #   requests:
+      #     cpu: "500m"
+      #     memory: "512Mi"
+      #   limits:
+      #     cpu: "1"
+      #     memory: "1Gi"
